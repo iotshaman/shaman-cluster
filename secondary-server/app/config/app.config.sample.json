@@ -1,0 +1,4 @@
+{
+  "port": "3000",
+  "primaryNodeApiUri": "http://localhost:9301/api"
+}

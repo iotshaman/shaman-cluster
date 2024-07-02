@@ -1,0 +1,21 @@
+{
+	"name": "shaman-cluster-database",
+	"version": "1.0.2",
+	"description": "Scaffolded using shaman-cli.",
+	"main": "dist/index.js",
+	"private": true,
+	"scripts": {
+		"build": "tsc",
+		"build:db": "mysql-shaman build sample_db testuser",
+		"scaffold": "mysql-shaman scaffold"
+	},
+	"author": "Shaman CLI",
+	"license": "UNLICENSED",
+	"devDependencies": {
+		"@types/node": "~16.6.0",
+		"typescript": "~4.9.4"
+	},
+	"dependencies": {
+		"sqlite-shaman": "~1.0.0"
+	}
+}

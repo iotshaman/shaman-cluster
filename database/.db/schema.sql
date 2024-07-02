@@ -1,0 +1,7 @@
+-- TABLES
+CREATE TABLE IF NOT EXISTS registration (
+  nodeId INTEGER NOT NULL PRIMARY KEY,
+  deviceId VARCHAR(64) NOT NULL,
+  nodeName VARCHAR(32) NOT NULL,
+  ipAddress VARCHAR(16) NOT NULL
+);
