@@ -1,25 +1,53 @@
 import { inject, injectable } from "inversify";
+import { IPlatformService, PrimaryNodeServiceClient, RegistrationForm } from "shaman-cluster-lib";
+import { AppConfig } from "../models/app.config";
 import { ITimerService } from "../services/timer.service";
 import { TYPES } from "../composition/app.composition.types";
-import { PrimaryNodeServiceClient, RegistrationForm } from "shaman-cluster-lib";
+import { PlatformConfig } from "shaman-cluster-lib/dist/types/platform-config";
 
 @injectable()
 export class RegistrationWorker {
   constructor(
+    @inject(TYPES.AppConfig) private config: AppConfig,
     @inject(TYPES.TimerService) private timer: ITimerService,
+    @inject(TYPES.PlatformService) private platformService: IPlatformService,
     @inject(TYPES.PrimaryNodeServiceClient) private client: PrimaryNodeServiceClient) {
     
   }
 
   start(): void {
-    this.timer.every(5, () => { // TODO: change timer to longer interval
-      console.log('Registering node');
-      let form: RegistrationForm = {
-        deviceId: "000000007ef60a48", // TODO: get device id
-        nodeName: 'node-3', // TODO: get hostname
-        ipAddress: "10.42.0.253" // TODO: get ip address
-      }
-      return this.client.registerNode(form);
-    })
+    let config = this.createPlatformConfigIfNotExists();
+    this.registerNode(config);
+    let ping = this.config.pingInterval;
+    this.timer.every(ping, async () => this.registerNode(config));
+  }
+
+  private createPlatformConfigIfNotExists(): PlatformConfig {
+    let dataPath = this.config.dataPath;
+    let config = this.platformService.getPlatformConfig(dataPath);
+    if (!!config) return config;
+    config = this.platformConfigFactory();
+    this.platformService.savePlatformConfig(dataPath, config);
+    return config;
+  }
+
+  private platformConfigFactory(): PlatformConfig {
+    return {
+      hostname: this.platformService.getHostname(),
+      ip: this.platformService.getIpAddress(this.config.nic),
+      port: this.config.port,
+      speed: this.platformService.getSpeedScore()
+    }
+  }
+
+  private registerNode(config: PlatformConfig): Promise<void> {
+    let form: RegistrationForm = {
+      deviceId: this.config.deviceId,
+      nodeName: config.hostname,
+      ipAddress: config.ip,
+      port: this.config.port,
+      speed: config.speed
+    }
+    return this.client.registerNode(form);
   }
 }

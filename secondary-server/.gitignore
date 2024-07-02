@@ -5,3 +5,4 @@ node_modules
 *.tgz
 .coveralls.yml
 app/config/app.config.json
+app/data/platform-config.json

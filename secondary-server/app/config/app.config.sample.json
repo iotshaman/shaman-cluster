@@ -1,4 +1,8 @@
 {
   "port": "3000",
-  "primaryNodeApiUri": "http://localhost:9301/api"
+  "deviceId": "00000000-0000-0000-0000-000000000000",
+  "nic": "Wi-Fi",
+  "primaryNodeApiUri": "http://localhost:9301/api",
+  "dataPath": "",
+  "pingInterval": 60
 }

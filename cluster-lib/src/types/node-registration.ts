@@ -1,5 +1,5 @@
-export class NodeRegistrationModel {
-  nodeId?: number;
+export type NodeRegistrationModel = {
+  nodeId: number;
   deviceId: string;
   nodeName: string;
   ipAddress: string;
