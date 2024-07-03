@@ -10,6 +10,8 @@ export interface IPlatformService {
   getHostname(): string;
   getIpAddress(nic: string): string;
   getSpeedScore(): number;
+  getPlatform(): string;
+  getprocessorCount(): number;
 }
 
 export class PlatformService implements IPlatformService {
@@ -41,6 +43,14 @@ export class PlatformService implements IPlatformService {
     combinations(25, 10);
     let end = new Date().getTime();
     return end - start;
+  }
+
+  getPlatform(): string {
+    return process.platform === 'win32' ? 'Windows' : 'Linux';
+  }
+
+  getprocessorCount(): number {
+    return os.cpus().length;
   }
 
 }

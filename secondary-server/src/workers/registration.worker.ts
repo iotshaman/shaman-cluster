@@ -1,9 +1,8 @@
 import { inject, injectable } from "inversify";
-import { IPlatformService, PrimaryNodeServiceClient, RegistrationForm } from "shaman-cluster-lib";
+import { IPlatformService, PrimaryNodeServiceClient, RegistrationForm, PlatformConfig } from "shaman-cluster-lib";
 import { AppConfig } from "../models/app.config";
 import { ITimerService } from "../services/timer.service";
 import { TYPES } from "../composition/app.composition.types";
-import { PlatformConfig } from "shaman-cluster-lib/dist/types/platform-config";
 
 @injectable()
 export class RegistrationWorker {
@@ -18,8 +17,7 @@ export class RegistrationWorker {
   start(): void {
     let config = this.createPlatformConfigIfNotExists();
     this.registerNode(config);
-    let ping = this.config.pingInterval;
-    this.timer.every(ping, async () => this.registerNode(config));
+    this.timer.every(this.config.pingInterval, () => this.registerNode(config));
   }
 
   private createPlatformConfigIfNotExists(): PlatformConfig {
@@ -36,7 +34,9 @@ export class RegistrationWorker {
       hostname: this.platformService.getHostname(),
       ip: this.platformService.getIpAddress(this.config.nic),
       port: this.config.port,
-      speed: this.platformService.getSpeedScore()
+      speed: this.platformService.getSpeedScore(),
+      platform: this.platformService.getPlatform(),
+      processors: this.platformService.getprocessorCount()
     }
   }
 
@@ -46,7 +46,9 @@ export class RegistrationWorker {
       nodeName: config.hostname,
       ipAddress: config.ip,
       port: this.config.port,
-      speed: config.speed
+      speed: config.speed,
+      platform: config.platform,
+      processors: config.processors
     }
     return this.client.registerNode(form);
   }

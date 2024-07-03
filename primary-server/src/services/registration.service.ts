@@ -39,6 +39,8 @@ export class RegistrationService implements IRegistrationService {
     node.ipAddress = form.ipAddress;
     node.port = form.port;
     node.speed = form.speed;
+    node.platform = form.platform;
+    node.processors = form.processors;
     node.nodeId = await this.context.models.registration.insert(node);
     return node;
   }

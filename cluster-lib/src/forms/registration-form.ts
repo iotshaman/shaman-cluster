@@ -4,4 +4,6 @@ export type RegistrationForm = {
   ipAddress: string;
   port: string;
   speed: number;
+  platform: string;
+  processors: number;
 }
