@@ -3,7 +3,9 @@ const TYPES = {
   Logger: "Logger",
   JsonFileService: "JsonFileService",
   ClusterDatabase: "ClusterDatabase",
-  RegistrationService: "RegistrationService"
+  RegistrationService: "RegistrationService",
+  ComputeStrategy: "ComputeStrategy",
+  ComputeService: "ComputeService"
 };
 
 export { TYPES };

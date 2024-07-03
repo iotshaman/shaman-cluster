@@ -1,3 +1,4 @@
+export * from './clients/compute.service-client';
 export * from './clients/registration.service-client';
 export * from './forms/compute-request.form';
 export * from './forms/registration-form';

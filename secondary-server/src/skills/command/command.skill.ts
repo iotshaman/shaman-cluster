@@ -12,6 +12,7 @@ export class CommandSkill implements ISkill {
     if (!this.validateArguments<CommandArgs>(req.body)) 
       return Promise.reject("Invalid arguments provided.");
     const rslt = await spawnScript(req.body.command, req.body.args);
+    console.dir(rslt);
   }
 
   validateArguments<T>(args: any): args is T {

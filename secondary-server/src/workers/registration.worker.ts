@@ -40,7 +40,7 @@ export class RegistrationWorker {
     }
   }
 
-  private registerNode(config: PlatformConfig): Promise<void> {
+  private async registerNode(config: PlatformConfig): Promise<void> {
     let form: RegistrationForm = {
       deviceId: this.config.deviceId,
       nodeName: config.hostname,
@@ -50,6 +50,6 @@ export class RegistrationWorker {
       platform: config.platform,
       processors: config.processors
     }
-    return this.client.registerNode(form);
+    await this.client.registerNode(form);
   }
 }
