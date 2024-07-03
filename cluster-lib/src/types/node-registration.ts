@@ -1,4 +1,4 @@
-export type NodeRegistrationModel = {
+export type NodeRegistration = {
   nodeId: number;
   deviceId: string;
   nodeName: string;

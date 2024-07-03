@@ -1,5 +1,5 @@
 import { inject, injectable } from "inversify";
-import { IPlatformService, PrimaryNodeServiceClient, RegistrationForm, PlatformConfig } from "shaman-cluster-lib";
+import { IPlatformService, IRegistrationServiceClient, RegistrationForm, PlatformConfig } from "shaman-cluster-lib";
 import { AppConfig } from "../models/app.config";
 import { ITimerService } from "../services/timer.service";
 import { TYPES } from "../composition/app.composition.types";
@@ -10,7 +10,7 @@ export class RegistrationWorker {
     @inject(TYPES.AppConfig) private config: AppConfig,
     @inject(TYPES.TimerService) private timer: ITimerService,
     @inject(TYPES.PlatformService) private platformService: IPlatformService,
-    @inject(TYPES.PrimaryNodeServiceClient) private client: PrimaryNodeServiceClient) {
+    @inject(TYPES.PrimaryNodeServiceClient) private client: IRegistrationServiceClient) {
     
   }
 

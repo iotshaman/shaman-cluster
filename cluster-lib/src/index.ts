@@ -1,4 +1,4 @@
-export * from './clients/primary-node.service-client';
+export * from './clients/registration.service-client';
 export * from './forms/compute-request.form';
 export * from './forms/registration-form';
 export * from './functions/math.functions';

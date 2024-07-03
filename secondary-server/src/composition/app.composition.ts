@@ -2,7 +2,7 @@
 import "reflect-metadata";
 import * as _path from 'path';
 import { Container, decorate, injectable } from "inversify";
-import { PrimaryNodeServiceClient, HttpService } from "shaman-cluster-lib";
+import { IRegistrationServiceClient, RegistrationServiceClient, HttpService } from "shaman-cluster-lib";
 import { IPlatformService, PlatformService } from "shaman-cluster-lib";
 import { SHAMAN_API_TYPES } from "shaman-api";
 import { TYPES } from "./app.composition.types";
@@ -26,14 +26,14 @@ export async function Compose(container: Container): Promise<Container> {
 }
 
 function configureServices(container: Container, config: AppConfig): Promise<Container> {
-  decorate(injectable(), PrimaryNodeServiceClient);
+  decorate(injectable(), RegistrationServiceClient);
   decorate(injectable(), HttpService);
   decorate(injectable(), PlatformService);
   container.bind<AppConfig>(TYPES.AppConfig).toConstantValue(config);
   container.bind<ITimerService>(TYPES.TimerService).to(TimerService);
   container.bind<IPlatformService>(TYPES.PlatformService).to(PlatformService);
-  container.bind<PrimaryNodeServiceClient>(TYPES.PrimaryNodeServiceClient).toConstantValue(
-    new PrimaryNodeServiceClient(config.primaryNodeApiUri)
+  container.bind<IRegistrationServiceClient>(TYPES.PrimaryNodeServiceClient).toConstantValue(
+    new RegistrationServiceClient(config.primaryNodeApiUri)
   );
   container.bind<IComputeService>(TYPES.ComputeService).to(ComputeService);
   return Promise.resolve(container);
