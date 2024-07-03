@@ -1,3 +1,4 @@
+// THIS FUNCTION IS ONLY TO TEST COMPUTATIONAL PERFORMANCE
 export function combinations(n: number, k: number) {
   var results = [];
   var recursive = (start: number, result: number[]) => {  

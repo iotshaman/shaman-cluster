@@ -5,7 +5,9 @@ const TYPES = {
   PrimaryNodeServiceClient: "PrimaryNodeServiceClient",
   TimerService: "TimerService",
   PlatformService: "PlatformService",
-  RegistrationWorker: "RegistrationWorker"
+  RegistrationWorker: "RegistrationWorker",
+  ComputeService: "ComputeService",
+  Skill: "Skill"
 };
 
 export { TYPES };
