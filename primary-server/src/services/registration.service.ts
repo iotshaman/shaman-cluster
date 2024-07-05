@@ -1,5 +1,5 @@
 import { injectable, inject } from "inversify";
-import { IShamanClusterDatabase, NodeRegistrationModel } from "shaman-cluster-database";
+import { IShamanClusterDatabase, NodeRegistrationModel, sqliteDate } from "shaman-cluster-database";
 import { RegistrationForm } from "shaman-cluster-lib";
 import { TYPES } from "../composition/app.composition.types";
 
@@ -26,8 +26,9 @@ export class RegistrationService implements IRegistrationService {
     });
     if (!!existingNode) {
       existingNode.ipAddress = form.ipAddress;
+      existingNode.lastRegistrationDateTime = sqliteDate();
       await this.context.models.registration.update(existingNode, {
-        columns: ['ipAddress', 'nodeName'],
+        columns: ['ipAddress', 'port', 'nodeName', 'lastRegistrationDateTime'],
         conditions: ['deviceId = ?'],
         args: [form.deviceId]
       });
@@ -41,6 +42,8 @@ export class RegistrationService implements IRegistrationService {
     node.speed = form.speed;
     node.platform = form.platform;
     node.processors = form.processors;
+    node.createdDateTime = sqliteDate();
+    node.lastRegistrationDateTime = node.createdDateTime;
     node.nodeId = await this.context.models.registration.insert(node);
     return node;
   }

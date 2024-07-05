@@ -1,3 +1,4 @@
+import * as moment from 'moment';
 import { injectable } from "inversify";
 import { IShamanClusterDatabase } from "shaman-cluster-database";
 import { ComputeRequestForm } from "shaman-cluster-lib";
@@ -16,8 +17,12 @@ export abstract class ComputeStrategy implements IComputeStrategy {
 
   constructor(private context: IShamanClusterDatabase) {}
 
-  public async getHealthNodes(): Promise<RegisteredClient[]> {
-    let nodes = await this.context.models.registration.find({});
+  protected async getHealthNodes(): Promise<RegisteredClient[]> {
+    var start = moment().add(-2, 'minutes').toDate().toISOString();
+    let nodes = await this.context.models.registration.find({
+      conditions: ['lastRegistrationDateTime > ?'],
+      args: [start]
+    });
     if (!nodes.length) return [];
     let clients = nodes.map(n => new RegisteredClient(n));
     let healthCheckTasks = clients.map(c => 

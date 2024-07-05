@@ -7,4 +7,6 @@ export class NodeRegistrationModel {
   speed: number;
   platform: string;
   processors: number;
+  createdDateTime: Date;
+  lastRegistrationDateTime: Date;
 }

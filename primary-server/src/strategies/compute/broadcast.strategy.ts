@@ -14,8 +14,7 @@ export class BroadcastComputeStrategy extends ComputeStrategy {
   
   async compute(req: ComputeRequestForm): Promise<void> {
     let nodes = await this.getHealthNodes();
-    if (!nodes.length) return Promise.reject("No nodes available.");
-    req.requestId = '123456789'; // TODO: generate GUID
+    if (!nodes.length) return Promise.reject(new Error("No nodes available."));
     let computeTasks = nodes.map(n => n.client.startProcess(req));
     var results = await Promise.all(computeTasks);
   }

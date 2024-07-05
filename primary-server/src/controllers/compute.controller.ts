@@ -26,7 +26,7 @@ export class ComputeController implements ShamanExpressController {
     if (!req.body.skill) return next(new RouteError("No skill name provided.", 400));
     if (!req.body.strategy) return next(new RouteError("No strategy provided.", 400));
     return this.computeService.startProcess(req.body)
-      .then(_ => res.status(202).send({status: "Accepted"}))
+      .then(requestId => res.status(202).send({status: "Accepted", requestId}))
       .catch(ex => next(new RouteError(ex.message, 500)));
   }
 
