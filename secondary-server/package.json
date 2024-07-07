@@ -24,6 +24,7 @@
 		"mysql-shaman": "1.0.8",
 		"pm2": "~5.4.1",
 		"reflect-metadata": "~0.1.13",
+		"service-bus": "file:..\\service-bus",
 		"shaman-api": "^2.0.4",
 		"shaman-cluster-lib": "file:..\\cluster-lib",
 		"winston": "~3.8.2"

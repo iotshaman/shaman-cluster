@@ -1,3 +1,5 @@
+import { ServiceBusConfig } from 'service-bus';
+
 export class AppConfig {
   port: string;
   deviceId: string;
@@ -5,4 +7,5 @@ export class AppConfig {
   primaryNodeApiUri: string;
   dataPath: string;
   pingInterval: number;
+  serviceBus: ServiceBusConfig;
 }

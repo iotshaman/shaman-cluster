@@ -7,7 +7,8 @@ const TYPES = {
   PlatformService: "PlatformService",
   RegistrationWorker: "RegistrationWorker",
   ComputeService: "ComputeService",
-  Skill: "Skill"
+  Skill: "Skill",
+  ServiceBus: "ServiceBus"
 };
 
 export { TYPES };

@@ -17,7 +17,8 @@
 			"template": "node-express-server",
 			"path": "secondary-server",
 			"include": [
-				"shaman-cluster-lib"
+				"shaman-cluster-lib",
+				"service-bus"
 			]
 		},
 		{
@@ -31,6 +32,12 @@
 			"environment": "node",
 			"template": "node-typescript-library",
 			"path": "cluster-lib"
+		},
+		{
+			"name": "service-bus",
+			"environment": "node",
+			"template": "node-typescript-library",
+			"path": "service-bus"
 		}
 	],
 	"transform": []

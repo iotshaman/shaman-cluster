@@ -4,6 +4,7 @@ import * as _path from 'path';
 import { Container, decorate, injectable } from "inversify";
 import { IRegistrationServiceClient, RegistrationServiceClient, HttpService } from "shaman-cluster-lib";
 import { IPlatformService, PlatformService } from "shaman-cluster-lib";
+import { IServiceBus, ServiceBus } from "service-bus";
 import { SHAMAN_API_TYPES } from "shaman-api";
 import { TYPES } from "./app.composition.types";
 import { AppConfig } from "../models/app.config";
@@ -21,6 +22,7 @@ export async function Compose(container: Container): Promise<Container> {
   await configureRouter(container);
   await configureWorkers(container, config);
   await configureSkills(container, config);
+  await configureServiceBus(container, config);
   await configureDataContext(container, config);
   return container;
 }
@@ -55,6 +57,13 @@ function configureWorkers(container: Container, config: AppConfig): Promise<Cont
 function configureSkills(container: Container, config: AppConfig): Promise<Container> {
   return new Promise(res => {
     container.bind<ISkill>(TYPES.Skill).to(CommandSkill);
+    res(container);
+  });
+}
+
+function configureServiceBus(container: Container, config: AppConfig): Promise<Container> {
+  return new Promise(res => {
+    container.bind<IServiceBus>(TYPES.ServiceBus).toConstantValue(new ServiceBus(config.serviceBus));
     res(container);
   });
 }
