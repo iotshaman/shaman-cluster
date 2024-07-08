@@ -21,10 +21,11 @@ export class JobWebhookController implements ShamanExpressController {
   }
 
   startJob = (req: Request, res: Response, next: any) => {
-    if (!req.body.skill) return next(new RouteError("No skill name provided.", 400));
-    if (!req.body.strategy) return next(new RouteError("No strategy provided.", 400));
-    if (!req.body.requestId) return next(new RouteError("No request id provided.", 400));
-    return this.computeService.startProcess(req.body)
+    let form = req.body;
+    if (!form.body.skill) return next(new RouteError("No skill name provided.", 400));
+    if (!form.body.strategy) return next(new RouteError("No strategy provided.", 400));
+    if (!form.body.requestId) return next(new RouteError("No request id provided.", 400));
+    return this.computeService.startProcess(form.body)
       .then(_ => res.status(204).send({status: "Success"}))
       .catch(ex => next(new RouteError(ex.message, 500)));
   }

@@ -47,7 +47,10 @@ export class MessageService implements IMessageService {
 
   async receiveNextMessage(lockToken: string): Promise<MessageModel> {
     if (lockToken != this.lockToken) return Promise.reject(new Error("Invalid lock token."));
-    let messages = await this.context.models.message.find({conditions: ['complete <> ?'], args: ['Y']});
+    let messages = await this.context.models.message.find({
+      conditions: ['complete <> ?', 'deadletter <> ?'], 
+      args: ['Y', 'Y']
+    });
     let message = messages
       .sort((a, b) => {
         let dateA = moment(a.messageDateTime);
@@ -83,7 +86,7 @@ export class MessageService implements IMessageService {
     message.lockId = null;
     message.attempts++;
     await this.context.models.message.update(message, {
-      columns: ['lockId', 'retryAttempts'],
+      columns: ['lockId', 'attempts'],
       conditions: ['messageId = ?'],
       args: [messageId],
     });

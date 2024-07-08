@@ -17,6 +17,6 @@
       }
     ],
     "topics": [],
-    "workerInterval": 50
+    "workerInterval": 100
   }
 }

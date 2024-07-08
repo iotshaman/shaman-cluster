@@ -32,33 +32,37 @@ export class MessageProcessor implements IMessageProcessor {
     this.messageService.releaseLock(lockId);
   }
 
-  private processQueueMessage(message: MessageModel): Promise<void> {
+  private async processQueueMessage(message: MessageModel): Promise<void> {
     let queue = this.config.queues.find(q => q.queueName == message.path);
     if (!queue) return Promise.reject(new Error(`Invalid queue name '${message.path}'.`));
-    let task = this.webhookService.postMessage(queue.webhookUri, {
-      path: queue.queueName,
-      body: JSON.parse(message.body), 
-      args: JSON.parse(message.args)
-    });
-    task.then(_ => this.messageService.messageDelivered(message.messageId));
-    task.catch(_ => this.handleFailedDelivery(message, queue.maxAttempts || 1));
-    return task;
+    try {
+      await this.webhookService.postMessage(queue.webhookUri, {
+        path: queue.queueName,
+        body: JSON.parse(message.body), 
+        args: JSON.parse(message.args)
+      });
+      await this.messageService.messageDelivered(message.messageId);
+    } catch(ex) {
+      await this.handleFailedDelivery(message, queue.maxAttempts || 1);
+    }
   }
 
-  private processTopicMessage(message: MessageModel): Promise<void> {
+  private async processTopicMessage(message: MessageModel): Promise<void> {
     let subscription = this.config.topics.find(q => q.topicName == message.path && q.subscription == message.subpath);
     if (!subscription) {
       let error = new Error(`Invalid subscription name '${message.subpath}' (topic = ${message.path}).`);
       return Promise.reject(error);
     }
-    let task = this.webhookService.postMessage(subscription.webhookUri, {
-      path: subscription.topicName,
-      body: JSON.parse(message.body), 
-      args: JSON.parse(message.args)
-    });
-    task.then(_ => this.messageService.messageDelivered(message.messageId));
-    task.catch(_ => this.handleFailedDelivery(message, subscription.maxAttempts || 1));
-    return task;
+    try {
+      await this.webhookService.postMessage(subscription.webhookUri, {
+        path: subscription.topicName,
+        body: JSON.parse(message.body), 
+        args: JSON.parse(message.args)
+      });
+      await this.messageService.messageDelivered(message.messageId);
+    } catch(ex) {
+      await this.handleFailedDelivery(message, subscription.maxAttempts || 1);
+    }
   }
 
   private async handleFailedDelivery(message: MessageModel, maxAttempts: number): Promise<void> {
