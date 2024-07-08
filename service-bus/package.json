@@ -14,6 +14,7 @@
 	"dependencies": {
 		"inversify": "~6.0.1",
 		"moment": "~2.30.1",
+		"reflect-metadata": "~0.1.13",
 		"sqlite-shaman": "~1.0.0",
 		"node-fetch": "^2.7.0"
 	},

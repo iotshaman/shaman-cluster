@@ -7,8 +7,16 @@
   "pingInterval": 60,
   "serviceBus": {
     "databaseFilePath": "Z/path/to/folder",
-    "webhookApiBaseUri": "http://localhost:9302/api",
-    "queues": [],
-    "topics": []
+    "webhookApiBaseUri": "http://localhost:9302/webhook",
+    "queues": [
+      {
+        "queueName": "jobs",
+        "maxAttempts": 1,
+        "rules": [],
+        "webhookUri": "job"
+      }
+    ],
+    "topics": [],
+    "workerInterval": 50
   }
 }

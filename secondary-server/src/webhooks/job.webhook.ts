@@ -6,28 +6,26 @@ import { TYPES } from "../composition/app.composition.types";
 import { IComputeService } from "../services/compute.service";
 
 @injectable()
-export class ComputeController implements ShamanExpressController {
+export class JobWebhookController implements ShamanExpressController {
 
-  name: string = 'compute';
+  name: string = 'job';
 
-  constructor(@inject(TYPES.ComputeService) private computeService: IComputeService) {
-
-  }
+  constructor(@inject(TYPES.ComputeService) private computeService: IComputeService) {}
 
   configure = (express: Application) => {
     let router = Router();
     router
-      .post('/', this.scheduleJob)
+      .post('/', this.startJob)
 
-    express.use('/api/compute', router);
+    express.use('/webhook/job', router);
   }
 
-  scheduleJob = (req: Request, res: Response, next: any) => {
+  startJob = (req: Request, res: Response, next: any) => {
     if (!req.body.skill) return next(new RouteError("No skill name provided.", 400));
     if (!req.body.strategy) return next(new RouteError("No strategy provided.", 400));
     if (!req.body.requestId) return next(new RouteError("No request id provided.", 400));
-    return this.computeService.scheduleJob(req.body)
-      .then(_ => res.status(202).send({status: "Accepted"}))
+    return this.computeService.startProcess(req.body)
+      .then(_ => res.status(204).send({status: "Success"}))
       .catch(ex => next(new RouteError(ex.message, 500)));
   }
 

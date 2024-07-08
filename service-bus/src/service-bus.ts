@@ -4,7 +4,7 @@ import { ThreadWorker } from './thread.worker';
 import { ServiceBusMessage } from './models/service-bus-message';
 
 export interface IServiceBus {
-  postMessage(message: ServiceBusMessage);
+  postMessage(message: ServiceBusMessage): void;
 }
 
 export class ServiceBus implements IServiceBus {
@@ -16,7 +16,7 @@ export class ServiceBus implements IServiceBus {
     this.worker = new ThreadWorker(scriptPath, {config});
   }
 
-  postMessage(message: ServiceBusMessage) {
+  postMessage(message: ServiceBusMessage): void {
     this.worker.postMessage(message);
   }
 

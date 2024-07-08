@@ -1,6 +1,6 @@
 import * as moment from 'moment';
 import { v4 } from "uuid";
-import { inject } from "inversify";
+import { inject, injectable } from "inversify";
 import { TYPES } from "../composition/service-bus.composition.types";
 import { MessageModel } from "../data/message.model";
 import { IServiceBusDataDatabase } from "../data/database.context";
@@ -18,6 +18,7 @@ export interface IMessageService {
   deadletterMessage(messageId: string): Promise<void>;
 }
 
+@injectable()
 export class MessageService implements IMessageService {
   
   private lockToken: string;
@@ -84,7 +85,7 @@ export class MessageService implements IMessageService {
     await this.context.models.message.update(message, {
       columns: ['lockId', 'retryAttempts'],
       conditions: ['messageId = ?'],
-      args: [messageId]
+      args: [messageId],
     });
     this.lockToken = null;
   }

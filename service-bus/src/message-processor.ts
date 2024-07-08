@@ -36,6 +36,7 @@ export class MessageProcessor implements IMessageProcessor {
     let queue = this.config.queues.find(q => q.queueName == message.path);
     if (!queue) return Promise.reject(new Error(`Invalid queue name '${message.path}'.`));
     let task = this.webhookService.postMessage(queue.webhookUri, {
+      path: queue.queueName,
       body: JSON.parse(message.body), 
       args: JSON.parse(message.args)
     });
@@ -51,6 +52,7 @@ export class MessageProcessor implements IMessageProcessor {
       return Promise.reject(error);
     }
     let task = this.webhookService.postMessage(subscription.webhookUri, {
+      path: subscription.topicName,
       body: JSON.parse(message.body), 
       args: JSON.parse(message.args)
     });

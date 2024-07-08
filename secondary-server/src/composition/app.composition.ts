@@ -15,6 +15,7 @@ import { ISkill } from "../skills/skill";
 import { CommandSkill } from "../skills/command/command.skill";
 import { ComputeService, IComputeService } from "../services/compute.service";
 import { ComputeController } from "../controllers/compute.controller";
+import { JobWebhookController } from "../webhooks/job.webhook";
 
 export async function Compose(container: Container): Promise<Container> {
   const config = container.get<AppConfig>(SHAMAN_API_TYPES.AppConfig);
@@ -44,6 +45,7 @@ function configureServices(container: Container, config: AppConfig): Promise<Con
 function configureRouter(container: Container): Promise<Container> {
   container.bind<HealthController>(SHAMAN_API_TYPES.ApiController).to(HealthController);
   container.bind<ComputeController>(SHAMAN_API_TYPES.ApiController).to(ComputeController);
+  container.bind<JobWebhookController>(SHAMAN_API_TYPES.ApiController).to(JobWebhookController);
   return Promise.resolve(container);
 }
 

@@ -21,7 +21,7 @@ export async function Configure(config: ServiceBusConfig, port: MessagePort): Pr
 }
 
 async function configureServices(config: ServiceBusConfig, container: Container): Promise<Container> {
-  container.bind<ServiceBusConfig>(TYPES.ServiceBusConfig).to(ServiceBusConfig);
+  container.bind<ServiceBusConfig>(TYPES.ServiceBusConfig).toConstantValue(config);
   container.bind<IMessageService>(TYPES.MessageService).to(MessageService);
   container.bind<IMessageProcessor>(TYPES.MessageProcessor).to(MessageProcessor);
   container.bind<IWebhookServiceClient>(TYPES.WebhookServiceClient).toConstantValue(
