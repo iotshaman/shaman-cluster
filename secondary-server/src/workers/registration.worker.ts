@@ -10,7 +10,7 @@ export class RegistrationWorker {
     @inject(TYPES.AppConfig) private config: AppConfig,
     @inject(TYPES.TimerService) private timer: ITimerService,
     @inject(TYPES.PlatformService) private platformService: IPlatformService,
-    @inject(TYPES.PrimaryNodeServiceClient) private client: IRegistrationServiceClient) {
+    @inject(TYPES.RegistrationServiceClient) private client: IRegistrationServiceClient) {
     
   }
 

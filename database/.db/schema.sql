@@ -19,4 +19,12 @@ CREATE TABLE IF NOT EXISTS compute_request (
   skill VARCHAR(32) NOT NULL,
   strategy VARCHAR(16) NOT NULL,
   body TEXT NOT NULL
-)
+);
+
+CREATE TABLE IF NOT EXISTS compute_request_message (
+  computeRequestMessageId INTEGER NOT NULL PRIMARY KEY,
+  requestId VARCHAR(64) NOT NULL,
+  deviceId VARCHAR(64) NOT NULL,
+  messageText TEXT NOT NULL,
+  messageDateTime TEXT NOT NULL
+);

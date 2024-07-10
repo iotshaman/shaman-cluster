@@ -2,7 +2,7 @@
 import "reflect-metadata";
 import * as _path from 'path';
 import { Container, decorate, injectable } from "inversify";
-import { IRegistrationServiceClient, RegistrationServiceClient, HttpService } from "shaman-cluster-lib";
+import { IRegistrationServiceClient, RegistrationServiceClient, HttpService, IMonitorServiceClient, MonitorServiceClient } from "shaman-cluster-lib";
 import { IPlatformService, PlatformService } from "shaman-cluster-lib";
 import { IServiceBus, ServiceBus } from "service-bus";
 import { SHAMAN_API_TYPES } from "shaman-api";
@@ -16,10 +16,12 @@ import { CommandSkill } from "../skills/command/command.skill";
 import { ComputeService, IComputeService } from "../services/compute.service";
 import { ComputeController } from "../controllers/compute.controller";
 import { JobWebhookController } from "../webhooks/job.webhook";
+import { IMonitorService, MonitorService } from "../services/monitor.service";
 
 export async function Compose(container: Container): Promise<Container> {
   const config = container.get<AppConfig>(SHAMAN_API_TYPES.AppConfig);
   await configureServices(container, config);
+  await configureServiceClients(container, config);
   await configureRouter(container);
   await configureWorkers(container, config);
   await configureSkills(container, config);
@@ -35,10 +37,18 @@ function configureServices(container: Container, config: AppConfig): Promise<Con
   container.bind<AppConfig>(TYPES.AppConfig).toConstantValue(config);
   container.bind<ITimerService>(TYPES.TimerService).to(TimerService);
   container.bind<IPlatformService>(TYPES.PlatformService).to(PlatformService);
-  container.bind<IRegistrationServiceClient>(TYPES.PrimaryNodeServiceClient).toConstantValue(
+  container.bind<IComputeService>(TYPES.ComputeService).to(ComputeService);
+  container.bind<IMonitorService>(TYPES.MonitorService).to(MonitorService);
+  return Promise.resolve(container);
+}
+
+function configureServiceClients(container: Container, config: AppConfig): Promise<Container> {
+  container.bind<IRegistrationServiceClient>(TYPES.RegistrationServiceClient).toConstantValue(
     new RegistrationServiceClient(config.primaryNodeApiUri)
   );
-  container.bind<IComputeService>(TYPES.ComputeService).to(ComputeService);
+  container.bind<IMonitorServiceClient>(TYPES.MonitorServiceClient).toConstantValue(
+    new MonitorServiceClient(config.primaryNodeApiUri)
+  );
   return Promise.resolve(container);
 }
 

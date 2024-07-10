@@ -1,11 +1,12 @@
 import { inject, injectable, multiInject } from "inversify";
-import { ComputeRequestForm, newGuid } from "shaman-cluster-lib";
-import { ComputeRequestModel, IShamanClusterDatabase, sqliteDate } from "shaman-cluster-database";
+import { ComputeMessageForm, ComputeRequestForm, newGuid } from "shaman-cluster-lib";
+import { ComputeRequestMessageModel, ComputeRequestModel, IShamanClusterDatabase, sqliteDate } from "shaman-cluster-database";
 import { TYPES } from "../composition/app.composition.types";
 import { IComputeStrategy } from "../strategies/compute.strategy";
 
 export interface IComputeService {
   startProcess(req: ComputeRequestForm): Promise<string>;
+  logMessage(message: ComputeMessageForm): Promise<void>;
 }
 
 @injectable()
@@ -30,6 +31,15 @@ export class ComputeService implements IComputeService {
     await this.context.models.compute_request.insert(computeRequest);
     await strategy.compute(req);
     return computeRequest.requestId;
+  }
+
+  async logMessage(message: ComputeMessageForm): Promise<void> {
+    let model = new ComputeRequestMessageModel();
+    model.requestId = message.requestId;
+    model.deviceId = message.deviceId;
+    model.messageText = message.messageText;
+    model.messageDateTime = sqliteDate();
+    await this.context.models.compute_request_message.insert(model);
   }
 
 }
