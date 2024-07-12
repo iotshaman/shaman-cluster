@@ -14,3 +14,7 @@ export function combinations(n: number, k: number) {
   recursive(1, []);
   return results;
 }
+
+export function randomInteger(min: number, max: number): number {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}

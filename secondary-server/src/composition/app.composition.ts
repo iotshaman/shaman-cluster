@@ -2,7 +2,8 @@
 import "reflect-metadata";
 import * as _path from 'path';
 import { Container, decorate, injectable } from "inversify";
-import { IRegistrationServiceClient, RegistrationServiceClient, HttpService, IMonitorServiceClient, MonitorServiceClient } from "shaman-cluster-lib";
+import { IRegistrationServiceClient, RegistrationServiceClient } from "shaman-cluster-lib";
+import { HttpService, IMonitorServiceClient, MonitorServiceClient } from "shaman-cluster-lib";
 import { IPlatformService, PlatformService } from "shaman-cluster-lib";
 import { IServiceBus, ServiceBus } from "service-bus";
 import { SHAMAN_API_TYPES } from "shaman-api";
@@ -17,6 +18,7 @@ import { ComputeService, IComputeService } from "../services/compute.service";
 import { ComputeController } from "../controllers/compute.controller";
 import { JobWebhookController } from "../webhooks/job.webhook";
 import { IMonitorService, MonitorService } from "../services/monitor.service";
+import { CollectSkill } from "../skills/collect/collect.skill";
 
 export async function Compose(container: Container): Promise<Container> {
   const config = container.get<AppConfig>(SHAMAN_API_TYPES.AppConfig);
@@ -69,6 +71,7 @@ function configureWorkers(container: Container, config: AppConfig): Promise<Cont
 function configureSkills(container: Container, config: AppConfig): Promise<Container> {
   return new Promise(res => {
     container.bind<ISkill>(TYPES.Skill).to(CommandSkill);
+    container.bind<ISkill>(TYPES.Skill).to(CollectSkill);
     res(container);
   });
 }

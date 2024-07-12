@@ -1,19 +1,22 @@
 import * as fs from 'fs';
-import fetch, { Response } from 'node-fetch';
+import { Agent } from 'https';
+import fetch, { Response, RequestInit } from 'node-fetch';
+import { getProxyAgent } from '../functions/proxy.functions';
 
 export abstract class HttpService {
 
-  constructor(private apiBaseUri: string) {}
+  constructor(private apiBaseUri: string, private proxy?: boolean) {}
 
   protected async getHtml(uri: string, headers: any = {}): Promise<string> {
     let url = `${this.apiBaseUri}/${uri}`;
-    let data = {
+    let data: RequestInit = {
       method: "GET",
       headers: {
         'Accept': 'text/html',
         'Content-Type': 'text/html',
         ...headers
-      }
+      },
+      agent: await this.getProxyAgent()
     }
     const response = await fetch(url, data);
     return this.handleApiTextResponse(response);
@@ -21,13 +24,14 @@ export abstract class HttpService {
 
   protected async get<T = any>(uri: string, headers: any = {}): Promise<T> {
     let url = `${this.apiBaseUri}/${uri}`;
-    let data = {
+    let data: RequestInit = {
       method: "GET",
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
         ...headers
-      }
+      },
+      agent: await this.getProxyAgent()
     }
     const response = await fetch(url, data);
     return this.handleApiResponse(response);
@@ -35,14 +39,15 @@ export abstract class HttpService {
 
   protected async post<T = any>(uri: string, body: any, headers: any = {}): Promise<T> {
     let url = `${this.apiBaseUri}/${uri}`;
-    let data = {
+    let data: RequestInit = {
       method: "POST",
       body: JSON.stringify(body),
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
         ...headers
-      }
+      },
+      agent: await this.getProxyAgent()
     }
     const response = await fetch(url, data);
     return this.handleApiResponse(response);
@@ -50,14 +55,15 @@ export abstract class HttpService {
 
   protected async patch<T = any>(uri: string, body: any, headers: any = {}): Promise<T> {
     let url = `${this.apiBaseUri}/${uri}`;
-    let data = {
+    let data: RequestInit = {
       method: "PATCH",
       body: JSON.stringify(body),
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
         ...headers
-      }
+      },
+      agent: await this.getProxyAgent()
     }
     const response = await fetch(url, data);
     return this.handleApiResponse(response);
@@ -65,14 +71,15 @@ export abstract class HttpService {
 
   protected async put<T = any>(uri: string, body: any, headers: any = {}): Promise<T> {
     let url = `${this.apiBaseUri}/${uri}`;
-    let data = {
+    let data: RequestInit = {
       method: "PUT",
       body: JSON.stringify(body),
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
         ...headers
-      }
+      },
+      agent: await this.getProxyAgent()
     }
     const response = await fetch(url, data);
     return this.handleApiResponse(response);
@@ -80,13 +87,14 @@ export abstract class HttpService {
 
   protected async delete<T = any>(uri: string, headers: any = {}): Promise<T> {
     let url = `${this.apiBaseUri}/${uri}`;
-    let data = {
+    let data: RequestInit = {
       method: "DELETE",
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
         ...headers
-      }
+      },
+      agent: await this.getProxyAgent()
     }
     const response = await fetch(url, data);
     return this.handleApiResponse(response);
@@ -120,6 +128,11 @@ export abstract class HttpService {
     if (response.status === 202 || response.status == 204) 
       return Promise.resolve(undefined);
     return response.text() as Promise<string>;
+  }
+
+  private getProxyAgent(): Promise<Agent> {
+    if (!this.proxy) return null;
+    return getProxyAgent();
   }
 
 }

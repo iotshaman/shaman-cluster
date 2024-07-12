@@ -4,6 +4,7 @@ export * from './clients/registration.service-client';
 export * from './forms/compute-message.form';
 export * from './forms/compute-request.form';
 export * from './forms/registration-form';
+export * from './functions/async.functions';
 export * from './functions/guid.functions';
 export * from './functions/math.functions';
 export * from './functions/script.functions';
