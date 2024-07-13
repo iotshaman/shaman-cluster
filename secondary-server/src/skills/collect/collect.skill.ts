@@ -20,7 +20,6 @@ export class CollectSkill implements ISkill {
     let client = new RestClientService(req.body.apiBaseUri, !!req.body.proxy);
     for (let request of req.body.requests) {
       try {
-        if (request.args?.index == 1) throw new Error("Sample error.");
         var result = await client.get(request.requestUri);
         await this.monitorService.store(req.requestId, result, request.args);
       } catch(ex) {
