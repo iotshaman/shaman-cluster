@@ -25,6 +25,18 @@ CREATE TABLE IF NOT EXISTS compute_request_message (
   computeRequestMessageId INTEGER NOT NULL PRIMARY KEY,
   requestId VARCHAR(64) NOT NULL,
   deviceId VARCHAR(64) NOT NULL,
+  messageType VARCHAR(6) NOT NULL,
   messageText TEXT NOT NULL,
+  messageDateTime TEXT NOT NULL,
+  trace TEXT NULL,
+  args TEXT NULL
+);
+
+CREATE TABLE IF NOT EXISTS compute_request_data (
+  computeRequestMessageId INTEGER NOT NULL PRIMARY KEY,
+  requestId VARCHAR(64) NOT NULL,
+  deviceId VARCHAR(64) NOT NULL,
+  args TEXT NOT NULL,
+  data TEXT NOT NULL,
   messageDateTime TEXT NOT NULL
 );

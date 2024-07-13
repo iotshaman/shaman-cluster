@@ -21,7 +21,7 @@ export class ComputeService implements IComputeService {
   }
 
   async scheduleJob(req: ComputeRequestForm): Promise<void> {
-    await this.monitorService.postComputeMessage(req.requestId, "Compute request has been queued.");
+    await this.monitorService.report(req.requestId, "Compute request has been queued.");
     this.serviceBus.postMessage({
       path: 'jobs',
       body: req,
@@ -32,9 +32,9 @@ export class ComputeService implements IComputeService {
   async startProcess(req: ComputeRequestForm): Promise<void> {
     let skill = this.skills.find(s => req.skill == s.name);
     if (!skill) return Promise.reject(`Skill not supported: ${req.skill}.`);
-    await this.monitorService.postComputeMessage(req.requestId, "Compute request has started.")
+    await this.monitorService.report(req.requestId, "Compute request has started.")
     await skill.execute(req);
-    await this.monitorService.postComputeMessage(req.requestId, "Compute request complete.");
+    await this.monitorService.report(req.requestId, "Compute request complete.");
   }
 
 }

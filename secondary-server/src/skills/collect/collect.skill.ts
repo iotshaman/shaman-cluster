@@ -19,11 +19,19 @@ export class CollectSkill implements ISkill {
     await this.sendProcessStartedMessges(req.requestId, req.body.requests.length);
     let client = new RestClientService(req.body.apiBaseUri, !!req.body.proxy);
     for (let request of req.body.requests) {
-      var result = await client.get(request.requestUri);
-      // TODO: send response to monitor
+      try {
+        if (request.args?.index == 1) throw new Error("Sample error.");
+        var result = await client.get(request.requestUri);
+        await this.monitorService.store(req.requestId, result, request.args);
+      } catch(ex) {
+        let error = ex as Error;
+        let message = error.message || 'Unkown error';
+        let stack = error.stack || 'No stack trace available';
+        await this.monitorService.logError(req.requestId, message, stack, request.args);
+      }
       if (!!req.body.randomDelay) await randomDelay();
     }
-    await this.monitorService.postComputeMessage(req.requestId, "All requests have completed.");
+    await this.monitorService.report(req.requestId, "All requests have completed.");
   }
 
   validateArguments<T>(args: any): args is T {
@@ -34,7 +42,7 @@ export class CollectSkill implements ISkill {
 
   private sendProcessStartedMessges(requestId: string, count: number): Promise<void> {
     let message = `Collect skill has started (request count = ${count})`;
-    return this.monitorService.postComputeMessage(requestId, message);
+    return this.monitorService.report(requestId, message);
   }
 
 }

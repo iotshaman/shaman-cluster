@@ -1,4 +1,5 @@
 export * from './functions/date.functions';
+export * from './tables/compute-request-data.model';
 export * from './tables/compute-request-message.model';
 export * from './tables/compute-request.model';
 export * from './tables/node-registration.model';

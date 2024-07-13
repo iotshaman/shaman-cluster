@@ -4,7 +4,9 @@ import { TYPES } from "../composition/app.composition.types";
 import { AppConfig } from "../models/app.config";
 
 export interface IMonitorService {
-  postComputeMessage(requestId: string, message: string): Promise<void>;
+  report(requestId: string, message: string): Promise<void>;
+  store(requestId: string, data: any, args: any): Promise<void>;
+  logError(equestId: string, error: string, stack: string, args: any): Promise<void>;
 }
 
 @injectable()
@@ -15,12 +17,31 @@ export class MonitorService implements IMonitorService {
 
   }
 
-  async postComputeMessage(requestId: string, message: string): Promise<void> {
-    await this.monitorClient.postComputeMessage({
+  async report(requestId: string, message: string): Promise<void> {
+    await this.monitorClient.report({
       requestId: requestId,
       deviceId: this.config.deviceId,
       messageText: message
-    })
+    });
+  }
+
+  async store(requestId: string, data: any, args: any): Promise<void> {
+    await this.monitorClient.store({
+      requestId: requestId,
+      deviceId: this.config.deviceId,
+      data: data,
+      args: args
+    });
+  }
+
+  async logError(requestId: string, error: string, stack: string, args: any): Promise<void> {
+    await this.monitorClient.logError({
+      requestId: requestId,
+      deviceId: this.config.deviceId,
+      error: error,
+      stack: stack,
+      args: args
+    });
   }
 
 }

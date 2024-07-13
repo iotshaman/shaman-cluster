@@ -17,9 +17,9 @@ export class CommandSkill implements ISkill {
       return Promise.reject("Invalid arguments provided.");
     const rslt = await spawnScript(req.body.command, req.body.args);
     if (!!rslt.stderr)
-      await this.monitorService.postComputeMessage(req.requestId, `Error: ${rslt.stderr}`);
+      await this.monitorService.report(req.requestId, `Error: ${rslt.stderr}`);
     else 
-      await this.monitorService.postComputeMessage(req.requestId, `Success: ${rslt.stdout}`);
+      await this.monitorService.report(req.requestId, `Success: ${rslt.stdout}`);
   }
 
   validateArguments<T>(args: any): args is T {

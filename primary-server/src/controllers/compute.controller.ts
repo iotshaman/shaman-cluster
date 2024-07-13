@@ -19,6 +19,8 @@ export class ComputeController implements ShamanExpressController {
     router
       .post('/', this.startProcess)
       .post('/message', this.logComputeMessage)
+      .post('/error', this.logComputeError)
+      .post('/data', this.storeComputeData)
 
     express.use('/api/compute', router);
   }
@@ -35,6 +37,22 @@ export class ComputeController implements ShamanExpressController {
     if (!req.body.requestId) return next(new RouteError("No request id provided.", 400));
     if (!req.body.deviceId) return next(new RouteError("No device id provided.", 400));
     return this.computeService.logMessage(req.body)
+      .then(_ => res.status(204).send({status: "Success"}))
+      .catch(ex => next(new RouteError(ex.message, 500)));
+  }
+
+  logComputeError = (req: Request, res: Response, next: any) => {
+    if (!req.body.requestId) return next(new RouteError("No request id provided.", 400));
+    if (!req.body.deviceId) return next(new RouteError("No device id provided.", 400));
+    return this.computeService.logError(req.body)
+      .then(_ => res.status(204).send({status: "Success"}))
+      .catch(ex => next(new RouteError(ex.message, 500)));
+  }
+
+  storeComputeData = (req: Request, res: Response, next: any) => {
+    if (!req.body.requestId) return next(new RouteError("No request id provided.", 400));
+    if (!req.body.deviceId) return next(new RouteError("No device id provided.", 400));
+    return this.computeService.storeData(req.body)
       .then(_ => res.status(204).send({status: "Success"}))
       .catch(ex => next(new RouteError(ex.message, 500)));
   }
