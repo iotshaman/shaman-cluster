@@ -1,0 +1,20 @@
+{
+  "port": "9399",
+  "databaseFilePath": "/path/to/data/folder/",
+  "queues": [
+    {
+      "queueName": "sample-queue",
+      "maxAttempts": 1,
+      "rules": [{"prop": "foo", "value": "bar", "operator": "="}]
+    }
+  ],
+  "topics": [
+    {
+      "topicName": "sample-topic",
+      "subscription": "subscription1",
+      "maxAttempts": 2,
+      "rules": [{"prop": "foo", "value": "bar", "operator": "="}]
+    }
+  ],
+  "workerInterval": 100
+}

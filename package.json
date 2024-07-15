@@ -1,0 +1,16 @@
+{
+  "name": "shaman-cluster",
+  "version": "1.0.0",
+  "description": "Software support for distributed data collection and computation.",
+  "main": "index.js",
+  "scripts": {
+    "restore": "sf install",
+    "build": "sf build",
+    "publish": "sf publish"
+  },
+  "author": "Kyle Brown",
+  "license": "ISC",
+  "dependencies": {
+    "shaman-factory": "~2.0.2"
+  }
+}

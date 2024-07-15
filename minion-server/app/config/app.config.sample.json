@@ -1,0 +1,28 @@
+{
+  "port": "3000",
+  "dataPath": "/path/to/data/folder/",
+  "registrationInterval": 20,
+  "serviceBusApiUrl": "http://localhost:9399/api",
+  "deviceId": "00000000-0000-0000-0000-000000000000",
+  "nic": "Wi-Fi",
+  "rootNodeApiUri": "http://localhost:9301/api",
+  "webhooks": [
+    {
+      "path": "compute", 
+      "webhookUri": "webhook/compute",
+      "failureUri": "webhook/compute/failure"
+    },
+    {
+      "path": "command", 
+      "webhookUri": "webhook/command",
+      "failureUri": "webhook/command/failure",
+      "rules": [
+        {
+          "prop": "targetId",
+          "value": "F8E8BD59-B0B5-4347-AE5C-03B810BFA161",
+          "operator": "="
+        }
+      ]
+    }
+  ]
+}

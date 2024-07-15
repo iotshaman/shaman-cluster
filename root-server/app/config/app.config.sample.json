@@ -1,0 +1,4 @@
+{
+  "port": "9301",
+  "serviceBusApiUrl": "http://localhost:9399/api"
+}
