@@ -9,13 +9,13 @@
   "webhooks": [
     {
       "path": "compute", 
-      "webhookUri": "webhook/compute",
-      "failureUri": "webhook/compute/failure"
+      "webhookUri": "api/webhook/compute",
+      "failureUri": "api/webhook/compute/failure"
     },
     {
       "path": "command", 
-      "webhookUri": "webhook/command",
-      "failureUri": "webhook/command/failure",
+      "webhookUri": "api/webhook/command",
+      "failureUri": "api/webhook/command/failure",
       "rules": [
         {
           "prop": "targetId",

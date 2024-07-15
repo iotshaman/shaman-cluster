@@ -21,7 +21,7 @@ export class ComputeController implements ShamanExpressController {
       .post('/', this.compute)
       .post('/failure', this.handleComputeFailure)
 
-    express.use('/webhook/compute', router);
+    express.use('/api/webhook/compute', router);
   }
 
   compute = (req: Request, res: Response, next: any) => {

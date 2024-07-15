@@ -19,7 +19,7 @@ export class CommandController implements ShamanExpressController {
       .post('/', this.runCommand)
       .post('/failure', this.handleCommandFailure)
 
-    express.use('/webhook/command', router);
+    express.use('/api/webhook/command', router);
   }
 
   runCommand = (req: Request, res: Response, next: any) => {
