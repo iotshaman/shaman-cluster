@@ -45,8 +45,8 @@ export class RegistrationService implements IRegistrationService {
     existingNode.lastRegistrationDateTime = sqliteDate();
     await this.context.models.registration.update(existingNode, {
       columns: ['ipAddress', 'port', 'nodeName', 'lastRegistrationDateTime'],
-      conditions: ['deviceId = ?'],
-      args: [form.deviceId]
+      conditions: ['deviceId = ?', 'instanceId = ?'],
+      args: [form.deviceId, form.instanceId]
     });
     return existingNode;
   }
