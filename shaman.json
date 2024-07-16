@@ -9,7 +9,21 @@
 			"include": [
 				"shaman-cluster-lib",
 				"service-bus-client"
-			]
+			],
+      "specs": {
+        "executable": true,
+        "publish": [
+          {
+            "instruction": "copy",
+            "arguments": [
+              {
+								"from": "app/config/app.config.sample.json",
+								"to": "app/config/app.config.json"
+							}
+            ]
+          }
+        ]
+      }
 		},
 		{
 			"name": "shaman-cluster-minion-api",
@@ -19,7 +33,21 @@
 			"include": [
 				"shaman-cluster-lib",
 				"service-bus-client"
-			]
+			],
+      "specs": {
+        "executable": true,
+        "publish": [
+          {
+            "instruction": "copy",
+            "arguments": [
+              {
+								"from": "app/config/app.config.sample.json",
+								"to": "app/config/app.config.json"
+							}
+            ]
+          }
+        ]
+      }
 		},
 		{
 			"name": "shaman-cluster-lib",
@@ -31,7 +59,21 @@
 			"name": "service-bus-api",
 			"environment": "node",
 			"template": "node-express-server",
-			"path": "service-bus/service-bus-api"
+			"path": "service-bus/service-bus-api",
+      "specs": {
+        "executable": true,
+        "publish": [
+          {
+            "instruction": "copy",
+            "arguments": [
+              {
+								"from": "app/config/app.config.sample.json",
+								"to": "app/config/app.config.json"
+							}
+            ]
+          }
+        ]
+      }
 		},
 		{
 			"name": "service-bus-client",
