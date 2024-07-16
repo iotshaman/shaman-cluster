@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Software support for distributed data collection and computation.",
   "main": "index.js",
+  "private": true,
   "scripts": {
     "restore": "sf install",
     "build": "sf build",
