@@ -19,7 +19,7 @@
       "rules": [
         {
           "prop": "targetId",
-          "value": "F8E8BD59-B0B5-4347-AE5C-03B810BFA161",
+          "value": "00000000-0000-0000-0000-000000000000",
           "operator": "="
         }
       ]

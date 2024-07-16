@@ -3,18 +3,16 @@
   "databaseFilePath": "/path/to/data/folder/",
   "queues": [
     {
-      "queueName": "sample-queue",
+      "queueName": "compute",
       "maxAttempts": 1,
-      "rules": [{"prop": "foo", "value": "bar", "operator": "="}]
-    }
-  ],
-  "topics": [
+      "rules": []
+    },
     {
-      "topicName": "sample-topic",
-      "subscription": "subscription1",
-      "maxAttempts": 2,
-      "rules": [{"prop": "foo", "value": "bar", "operator": "="}]
+      "queueName": "command",
+      "maxAttempts": 1,
+      "rules": []
     }
   ],
+  "topics": [],
   "workerInterval": 100
 }
