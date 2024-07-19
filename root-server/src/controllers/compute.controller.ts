@@ -23,6 +23,8 @@ export class ComputeController implements ShamanExpressController {
       .post('/error', this.logComputeError)
       .post('/data', this.storeComputeData)
       .post('/chunk/status', this.updateChunkStatus)
+      .get('/:requestId/status', this.getComputeStatus)
+      .get('/:requestId/data', this.getComputeData)
 
     express.use('/api/compute', router);
   }
@@ -67,6 +69,20 @@ export class ComputeController implements ShamanExpressController {
     let {requestId, chunkId, status} = req.body;
     return this.computeService.updateChunkStatus(requestId, chunkId, status)
       .then(_ => res.status(204).send({status: "Success"}))
+      .catch(ex => next(new RouteError(ex.message, 500)));
+  }
+
+  getComputeStatus = (req: Request, res: Response, next: any) => {
+    if (!req.params.requestId) return next(new RouteError("No request id provided.", 400));
+    return this.computeService.getComputeStatus(req.params.requestId)
+      .then(status => res.json(status))
+      .catch(ex => next(new RouteError(ex.message, 500)));
+  }
+
+  getComputeData = (req: Request, res: Response, next: any) => {
+    if (!req.params.requestId) return next(new RouteError("No request id provided.", 400));
+    return this.computeService.getComputeData(req.params.requestId)
+      .then(status => res.json(status))
       .catch(ex => next(new RouteError(ex.message, 500)));
   }
 

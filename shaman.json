@@ -19,6 +19,14 @@
               {
 								"from": "app/config/app.config.sample.json",
 								"to": "app/config/app.config.json"
+							},
+							{
+								"from": "app/data/schema.sql",
+								"to": "app/data/schema.sql"
+							},
+							{
+								"from": "../shaman.root.json",
+								"to": "../shaman.root.json"
 							}
             ]
           }
@@ -43,6 +51,14 @@
               {
 								"from": "app/config/app.config.sample.json",
 								"to": "app/config/app.config.json"
+							},
+							{
+								"from": "../shaman.minion.json",
+								"to": "../shaman.minion.json"
+							},
+							{
+								"from": "app/data/.gitkeep",
+								"to": "app/data/.gitkeep"
 							}
             ]
           }
@@ -69,6 +85,10 @@
               {
 								"from": "app/config/app.config.sample.json",
 								"to": "app/config/app.config.json"
+							},
+							{
+								"from": "app/data/schema.sql",
+								"to": "app/data/schema.sql"
 							}
             ]
           }

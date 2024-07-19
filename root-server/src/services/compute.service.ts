@@ -7,6 +7,7 @@ import { IShamanClusterDatabase } from "../data/database.context";
 import { ComputeRequestMessageModel } from "../data/models/compute-request-message.model";
 import { ComputeRequestDataModel } from "../data/models/compute-request-data.model";
 import { ComputeRequestModel } from "../data/models/compute-request.model";
+import { ComputeStatus } from "../models/comput-status";
 
 export interface IComputeService {
   startProcess(req: ComputeRequestForm): Promise<string>;
@@ -14,6 +15,8 @@ export interface IComputeService {
   logError(message: ComputeErrorForm): Promise<void>;
   storeData(message: ComputeDataForm): Promise<void>;
   updateChunkStatus(requestId: string, chunkId: string, status: string): Promise<void>;
+  getComputeStatus(requestId: string): Promise<ComputeStatus>;
+  getComputeData(requestId: string): Promise<ComputeRequestDataModel[]>;
 }
 
 @injectable()
@@ -86,6 +89,25 @@ export class ComputeService implements IComputeService {
       columns: ['status', 'complete'],
       conditions: ['requestId = ?', 'chunkId = ?'],
       args: [requestId, chunkId]
+    });
+  }
+
+  async getComputeStatus(requestId: string): Promise<ComputeStatus> {
+    let chunks = await this.context.models.compute_request.find({
+      conditions: ['requestId = ?'],
+      args: [requestId]
+    });
+    return {
+      success: chunks.filter(c => c.status == 'Success').length,
+      pending: chunks.filter(c => c.status == 'Pending').length,
+      error: chunks.filter(c => c.status == 'Error').length
+    }
+  }
+
+  getComputeData(requestId: string): Promise<ComputeRequestDataModel[]> {
+    return this.context.models.compute_request_data.find({
+      conditions: ['requestId = ?'],
+      args: [requestId]
     });
   }
 

@@ -1,0 +1,27 @@
+{
+	"name": "shaman-cluster-minion",
+	"projects": [
+		{
+			"name": "shaman-cluster-minion-api",
+			"environment": "node",
+			"template": "node-express-server",
+			"path": "minion-server",
+			"include": [
+				"shaman-cluster-lib",
+				"service-bus-client"
+			]
+		},
+		{
+			"name": "shaman-cluster-lib",
+			"environment": "node",
+			"template": "node-typescript-library",
+			"path": "cluster-lib"
+		},
+		{
+			"name": "service-bus-client",
+			"environment": "node",
+			"template": "node-typescript-library",
+			"path": "service-bus/service-bus-client"
+		}
+	]
+}
