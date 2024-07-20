@@ -1,4 +1,5 @@
 import { WebhookListener } from "service-bus-client";
+import { ProxyConfig } from "shaman-cluster-lib";
 
 export class AppConfig {
   port: string;
@@ -10,4 +11,5 @@ export class AppConfig {
   nic: string;
   rootNodeApiUri: string;
   webhooks: WebhookListener[];
+  proxy?: ProxyConfig;
 }

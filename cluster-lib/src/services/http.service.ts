@@ -1,11 +1,11 @@
 import * as fs from 'fs';
 import { Agent } from 'https';
 import fetch, { Response, RequestInit } from 'node-fetch';
-import { getProxyAgent } from '../functions/proxy.functions';
+import { IProxyService } from './proxy/proxy.service';
 
 export abstract class HttpService {
 
-  constructor(private apiBaseUri: string, private proxy?: boolean) {}
+  constructor(private apiBaseUri: string, private proxyService?: IProxyService) {}
 
   protected async getHtml(uri: string, headers: any = {}): Promise<string> {
     let url = `${this.apiBaseUri}/${uri}`;
@@ -131,8 +131,8 @@ export abstract class HttpService {
   }
 
   private getProxyAgent(): Promise<Agent> {
-    if (!this.proxy) return null;
-    return getProxyAgent();
+    if (!this.proxyService) return null;
+    return this.proxyService.getAgent();
   }
 
 }

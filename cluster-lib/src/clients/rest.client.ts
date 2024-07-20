@@ -1,4 +1,8 @@
 import { HttpService } from "../services/http.service";
+import { IProxyService } from "../services/proxy/proxy.service";
+import { PublicProxyService } from "../services/proxy/public-proxy.service";
+import { TorProxyService } from "../services/proxy/tor-proxy.service";
+import { ProxyConfig } from "../types/proxy-config";
 
 export interface IRestClient {
   Get<T = any>(uri: string, headers?: any): Promise<T>;
@@ -7,8 +11,8 @@ export interface IRestClient {
 
 export class RestClient extends HttpService implements IRestClient {
 
-  constructor(apiBaseUri: string, proxy?: boolean) {
-    super(apiBaseUri, proxy);
+  constructor(apiBaseUri: string, proxyService?: IProxyService) {
+    super(apiBaseUri, proxyService);
   }
 
   Get<T = any>(uri: string, headers?: any): Promise<T> {
@@ -21,6 +25,10 @@ export class RestClient extends HttpService implements IRestClient {
 
 }
 
-export function RestClientFactory(apiBaseUri: string, proxy?: boolean): IRestClient {
-  return new RestClient(apiBaseUri, proxy);
+export function RestClientFactory(apiBaseUri: string, proxy?: boolean, proxyConfig?: ProxyConfig): IRestClient {
+  if (!proxy) return new RestClient(apiBaseUri);
+  switch (proxyConfig?.type) {
+    case 'tor': return new RestClient(apiBaseUri, new TorProxyService(proxyConfig.proxyAddress));
+    default: return new RestClient(apiBaseUri, new PublicProxyService());
+  }
 }

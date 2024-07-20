@@ -3,6 +3,7 @@ import { RestClientFactory } from 'shaman-cluster-lib';
 import { TYPES } from '../../composition/app.composition.types';
 import { CollectArgs } from './collect.args';
 import { ISkill } from '../skill';
+import { AppConfig } from '../../models/app.config';
 import { IMonitorService } from '../../services/monitor.service';
 
 @injectable()
@@ -10,14 +11,16 @@ export class CollectSkill implements ISkill {
 
   name: string = 'collect';
 
-  constructor(@inject(TYPES.MonitorService) private monitor: IMonitorService) {
+  constructor(
+    @inject(TYPES.AppConfig) private config: AppConfig,
+    @inject(TYPES.MonitorService) private monitor: IMonitorService) {
 
   }
 
   async execute(req: any): Promise<void> {
     if (!this.validateRequests<CollectArgs>(req)) 
       return Promise.reject("Invalid arguments provided.");
-    let client = RestClientFactory(req.apiBaseUri, req.proxy);
+    let client = RestClientFactory(req.apiBaseUri, req.proxy, this.config.proxy);
     try {
       var result = await client.Get(req.requestUri);
       await this.monitor.store(req.requestId, result, req.args);

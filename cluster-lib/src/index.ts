@@ -18,3 +18,4 @@ export * from './services/platform.service';
 export * from './services/timer.service';
 export * from './types/node-registration';
 export * from './types/platform-config';
+export * from './types/proxy-config';
