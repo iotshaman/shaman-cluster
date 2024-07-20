@@ -52,6 +52,7 @@ export class RegistrationTimer {
         nodeName: config.hostname,
         ipAddress: config.ip,
         port: this.config.port,
+        nodeUrl: this.config.url || `http://${config.ip}:${this.config.port}/`,
         speed: config.speed,
         platform: config.platform,
         processors: config.processors
@@ -66,7 +67,7 @@ export class RegistrationTimer {
       let form: WebhookRegistration = {
         deviceId: this.config.deviceId,
         instanceId: this.config.port,
-        webhookUrl: `http://${config.ip}:${this.config.port}/`,
+        webhookUrl: this.config.url || `http://${config.ip}:${this.config.port}/`,
         listeners: this.config.webhooks
       }
       await this.serviceBus.register(form);

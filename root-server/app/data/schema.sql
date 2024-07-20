@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS registration (
   nodeName VARCHAR(32) NOT NULL,
   ipAddress VARCHAR(16) NOT NULL,
   port VARCHAR(5) NOT NULL,
+  nodeUrl VARCHAR(128) NULL,
   speed INTEGER NOT NULL,
   platform VARCHAR(8) NOT NULL,
   processors INTEGER NOT NULL,

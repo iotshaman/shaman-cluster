@@ -14,6 +14,7 @@ let bootstrap = async () => {
   let config = await ConfigFactory.GenerateConfig<AppConfig>(configPath);
   let args = new CommandLineArguments(process.argv);
   config.port = args.getValueOrDefault('port', config.port);
+  config.url = args.getValueOrDefault('url', config.url);
   const app = new ShamanExpressApp({
     configPath: configPath,
     port: parseInt(config.port),

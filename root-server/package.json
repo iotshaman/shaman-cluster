@@ -21,7 +21,7 @@
 		"jsonwebtoken": "~9.0.2",
 		"moment": "~2.29.4",
 		"mysql": "~2.18.1",
-		"mysql-shaman": "1.0.8",
+		"mysql-shaman": "~1.0.11",
 		"reflect-metadata": "~0.1.13",
 		"shaman-api": "^2.0.3",
 		"sqlite-shaman": "^1.0.0",

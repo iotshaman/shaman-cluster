@@ -7,6 +7,7 @@ export class NodeRegistrationModel {
   nodeName: string;
   ipAddress: string;
   port: string;
+  nodeUrl?: string;
   speed: number;
   platform: string;
   processors: number;
@@ -20,6 +21,7 @@ export class NodeRegistrationModel {
     node.nodeName = form.nodeName;
     node.ipAddress = form.ipAddress;
     node.port = form.port;
+    node.nodeUrl = form.nodeUrl;
     node.speed = form.speed;
     node.platform = form.platform;
     node.processors = form.processors;

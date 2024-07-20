@@ -28,12 +28,12 @@ async function getProxyList(): Promise<string[]> {
 
 async function validateProxy(agent: Agent): Promise<boolean> {
   try {
-    let url = `https://api.restful-api.dev/objects`;
+    let url = `https://google.com/`;
     let data: RequestInit = {
       method: "GET",
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        'Accept': 'text/html',
+        'Content-Type': 'text/html'
       },
       agent: agent,
       timeout: 3000

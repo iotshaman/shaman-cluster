@@ -6,6 +6,7 @@ export class AppConfig {
   registrationInterval: number;
   serviceBusApiUrl: string;
   deviceId: string;
+  url?: string;
   nic: string;
   rootNodeApiUri: string;
   webhooks: WebhookListener[];
