@@ -3,11 +3,13 @@ import { TYPES } from "../composition/app.composition.types";
 import { AppConfig } from "../models/app.config";
 import { IPlatformService, IRegistrationServiceClient, ITimerService, PlatformConfig } from "shaman-cluster-lib";
 import { IServiceBusClient, WebhookRegistration } from "service-bus-client";
+import { ILogger, SHAMAN_API_TYPES } from "shaman-api";
 
 @injectable()
 export class RegistrationTimer {
 
   constructor(
+    @inject(SHAMAN_API_TYPES.Logger) private logger: ILogger,
     @inject(TYPES.AppConfig) private config: AppConfig,
     @inject(TYPES.TimerService) private timer: ITimerService,
     @inject(TYPES.PlatformService) private platformService: IPlatformService,
@@ -18,11 +20,19 @@ export class RegistrationTimer {
 
   async start(): Promise<void> {
     let config = this.createPlatformConfigIfNotExists();
-    await this.registerNode(config);
-    await this.registerwebhooks(config);
-    this.timer.every(this.config.registrationInterval, async () => {
-      await Promise.all([this.registerwebhooks(config), this.registerNode(config)]);
-    });
+    await this.registerAll(config);
+    this.timer.every(this.config.registrationInterval, async () => await this.registerAll(config));
+    this.timer.registerErrorHandler(_ => {
+      this.logger.write("Unable to register node (root node unavailable).", "warning");
+      return Promise.resolve();
+    })
+  }
+
+  private async registerAll(config: PlatformConfig): Promise<void> {
+    await Promise.all([this.registerwebhooks(config), this.registerNode(config)]).catch(_ => {
+      this.logger.write("Unable to register node (root node unavailable).", "warning");
+      return Promise.resolve();
+    })
   }
 
   private createPlatformConfigIfNotExists(): PlatformConfig {
@@ -45,35 +55,27 @@ export class RegistrationTimer {
   }
 
   private async registerNode(config: PlatformConfig): Promise<void> {
-    try {
-      await this.registrationService.registerNode({
-        deviceId: this.config.deviceId,
-        instanceId: this.config.port,
-        nodeName: config.hostname,
-        ipAddress: config.ip,
-        port: this.config.port,
-        nodeUrl: this.config.url || `http://${config.ip}:${this.config.port}/`,
-        speed: config.speed,
-        platform: config.platform,
-        processors: config.processors
-      });
-    } catch(ex) {
-      console.error(ex); // TODO: handle error
-    }
+    await this.registrationService.registerNode({
+      deviceId: this.config.deviceId,
+      instanceId: this.config.port,
+      nodeName: config.hostname,
+      ipAddress: config.ip,
+      port: this.config.port,
+      nodeUrl: this.config.url || `http://${config.ip}:${this.config.port}/`,
+      speed: config.speed,
+      platform: config.platform,
+      processors: config.processors
+    });
   }
 
   private async registerwebhooks(config: PlatformConfig): Promise<void> {
-    try {
-      let form: WebhookRegistration = {
-        deviceId: this.config.deviceId,
-        instanceId: this.config.port,
-        webhookUrl: this.config.url || `http://${config.ip}:${this.config.port}/`,
-        listeners: this.config.webhooks
-      }
-      await this.serviceBus.register(form);
-    } catch(ex) {
-      console.error(ex); // TODO: handle error
+    let form: WebhookRegistration = {
+      deviceId: this.config.deviceId,
+      instanceId: this.config.port,
+      webhookUrl: this.config.url || `http://${config.ip}:${this.config.port}/`,
+      listeners: this.config.webhooks
     }
+    await this.serviceBus.register(form);
   }
   
 }
