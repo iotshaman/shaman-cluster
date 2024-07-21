@@ -54,7 +54,11 @@ export class ScrapeSkill implements ISkill {
   private async scrapeWithRender(req: ScrapeArgs): Promise<void> {
     try {
       if (!this.config.chromiumPath) return Promise.reject(new Error("Chromium not configured."));
-      let browser = await puppeteer.launch({headless: true, executablePath: this.config.chromiumPath});
+      let browser = !req.proxy || this.config.proxy?.type != "tor" ? 
+        await puppeteer.launch({headless: true, executablePath: this.config.chromiumPath}) :
+        await puppeteer.launch({headless: true, executablePath: this.config.chromiumPath, args: [
+          `--proxy-server=${this.config.proxy.proxyAddress}`,
+        ]});
       const page = await browser.newPage();
       await page.setUserAgent(this.agent);
       await page.goto(`${req.apiBaseUri}/${req.requestUri}`);
