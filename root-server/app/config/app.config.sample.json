@@ -1,4 +1,5 @@
 {
   "port": "9301",
-  "serviceBusApiUrl": "http://localhost:9399/api"
+  "serviceBusApiUrl": "http://localhost:9399/api",
+  "storageFolderPath": "/path/to/data/storage/folder"
 }

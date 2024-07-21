@@ -18,6 +18,7 @@ import { IMonitorService, MonitorService } from "../services/monitor.service";
 import { ComputeController } from "../controllers/compute.controller";
 import { CommandController } from "../controllers/command.controller";
 import { CommandService, ICommandService } from "../services/command.service";
+import { ScrapeSkill } from "../skills/scrape/scrape.skill";
 
 export async function Compose(container: Container, config: AppConfig): Promise<Container> {
   decorateLibraryClasses();
@@ -60,6 +61,7 @@ function configureServiceClients(container: Container, config: AppConfig): Promi
 function configureSkills(container: Container, config: AppConfig): Promise<Container> {
   return new Promise(res => {
     container.bind<ISkill>(TYPES.Skill).to(CollectSkill);
+    container.bind<ISkill>(TYPES.Skill).to(ScrapeSkill);
     res(container);
   });
 }

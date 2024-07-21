@@ -6,6 +6,7 @@ import { ProxyConfig } from "../types/proxy-config";
 
 export interface IRestClient {
   Get<T = any>(uri: string, headers?: any): Promise<T>;
+  GetHtml(uri: string, headers?: any): Promise<string>;
   Post<T>(webhookUri: string, message: T, headers?: any): Promise<void>;
 }
 
@@ -19,8 +20,12 @@ export class RestClient extends HttpService implements IRestClient {
     return super.get<T>(uri, headers);
   }
 
+  GetHtml(uri: string, headers?: any): Promise<string> {
+    return super.getHtml(uri, headers);
+  }
+
   Post<T>(webhookUri: string, message: T, headers?: any): Promise<void> {
-    return this.post<void>(webhookUri, message);
+    return this.post<void>(webhookUri, message, headers);
   }
 
 }

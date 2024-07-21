@@ -4,7 +4,9 @@ import * as _path from 'path';
 import { Container, decorate, injectable } from "inversify";
 import { SHAMAN_API_TYPES } from "shaman-api";
 import { IServiceBusClient, ServiceBusClient } from "service-bus-client";
-import { IPlatformService, ITimerService, PlatformService, TimerService } from "shaman-cluster-lib";
+import { IPlatformService, PlatformService } from "shaman-cluster-lib";
+import { ITimerService, TimerService } from "shaman-cluster-lib";
+import { FileService, IFileService } from "shaman-cluster-lib";
 import { TYPES } from "./app.composition.types";
 import { AppConfig } from "../models/app.config";
 import { HealthController } from "../controllers/health.controller";
@@ -30,6 +32,7 @@ export async function Compose(container: Container): Promise<Container> {
 function decorateLibraryClasses() {  
   decorate(injectable(), TimerService);
   decorate(injectable(), PlatformService);
+  decorate(injectable(), FileService);
 }
 
 function configureServices(container: Container, config: AppConfig): Promise<Container> {
@@ -39,6 +42,7 @@ function configureServices(container: Container, config: AppConfig): Promise<Con
   container.bind<ITimerService>(TYPES.TimerService).to(TimerService);
   container.bind<IPlatformService>(TYPES.PlatformService).to(PlatformService);
   container.bind<ICommandService>(TYPES.CommandService).to(CommandService);
+  container.bind<IFileService>(TYPES.FileService).to(FileService);
   return Promise.resolve(container);
 }
 

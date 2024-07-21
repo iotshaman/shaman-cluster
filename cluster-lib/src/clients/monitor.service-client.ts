@@ -3,10 +3,12 @@ import { ComputeMessageForm } from "../forms/compute-message.form";
 import { ComputeDataForm } from "../forms/compute-data.form";
 import { ComputeErrorForm } from "../forms/compute-error.form";
 import { CommandDataForm } from "../forms/command-data.form";
+import { ComputeFileForm } from "../forms/compute-file.form";
 
 export interface IMonitorServiceClient {
   report(form: ComputeMessageForm): Promise<void>;
   store(form: ComputeDataForm): Promise<void>;
+  storeFile(form: ComputeFileForm): Promise<void>;
   logError(form: ComputeErrorForm): Promise<void>;
   updateChunkStatus(requestId: string, chunkId: string, status: string): Promise<void>;
   storeCommandData(form: CommandDataForm): Promise<void>;
@@ -25,6 +27,10 @@ export class MonitorServiceClient extends HttpService implements IMonitorService
   
   store(form: ComputeDataForm): Promise<void> {
     return this.post('compute/data', form);
+  }
+  
+  storeFile(form: ComputeFileForm): Promise<void> {
+    return this.post('compute/file', form);
   }
 
   logError(form: ComputeErrorForm): Promise<void> {

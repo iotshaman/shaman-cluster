@@ -1,7 +1,8 @@
-export type CollectArgs = {
+export type ScrapeArgs = {
   requestId: string;
   apiBaseUri: string; 
   requestUri: string;
   args: any;
-  proxy: boolean;
+  proxy?: boolean;
+  render?: boolean;
 }

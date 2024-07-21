@@ -6,6 +6,7 @@ import { AppConfig } from "../models/app.config";
 export interface IMonitorService {
   report(requestId: string, message: string): Promise<void>;
   store(requestId: string, data: any, args: any): Promise<void>;
+  storeFile(requestId: string, contents: string, filename: string, args: any, ext?: string): Promise<void>;
   logError(equestId: string, error: string, stack: string, args: any): Promise<void>;
   updateChunkStatus(requestId: string, chunkId: string, status: string): Promise<void>;
   storeCommandData(requestId: string, stdout: string, stderr: string): Promise<void>;
@@ -33,6 +34,17 @@ export class MonitorService implements IMonitorService {
       requestId: requestId,
       deviceId: this.config.deviceId,
       data: data,
+      args: args
+    });
+  }
+
+  storeFile(requestId: string, contents: string, filename: string, args: any, ext?: string): Promise<void> {
+    return this.monitorClient.storeFile({
+      requestId: requestId,
+      deviceId: this.config.deviceId,
+      contents: contents,
+      fileName: filename,
+      extension: ext,
       args: args
     });
   }

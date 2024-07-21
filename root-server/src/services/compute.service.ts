@@ -1,19 +1,24 @@
+import * as _path from "path";
 import { inject, injectable } from "inversify";
-import { ComputeDataForm, ComputeErrorForm, ComputeMessageForm, ComputeRequestForm } from "shaman-cluster-lib";
+import { ComputeDataForm, ComputeErrorForm, IFileService  } from "shaman-cluster-lib";
+import { ComputeMessageForm, ComputeRequestForm, ComputeFileForm } from "shaman-cluster-lib";
 import { newGuid, sqliteDate } from "shaman-cluster-lib";
-import { TYPES } from "../composition/app.composition.types";
 import { IServiceBusClient, ServiceBusMessage } from "service-bus-client";
+import { TYPES } from "../composition/app.composition.types";
+import { AppConfig } from "../models/app.config";
 import { IShamanClusterDatabase } from "../data/database.context";
 import { ComputeRequestMessageModel } from "../data/models/compute-request-message.model";
 import { ComputeRequestDataModel } from "../data/models/compute-request-data.model";
 import { ComputeRequestModel } from "../data/models/compute-request.model";
 import { ComputeStatus } from "../models/comput-status";
+import { ComputeRequestFileModel } from "../data/models/compute-request-file.model";
 
 export interface IComputeService {
   startProcess(req: ComputeRequestForm): Promise<string>;
   logMessage(message: ComputeMessageForm): Promise<void>;
   logError(message: ComputeErrorForm): Promise<void>;
   storeData(message: ComputeDataForm): Promise<void>;
+  storeFile(message: ComputeFileForm): Promise<void>;
   updateChunkStatus(requestId: string, chunkId: string, status: string): Promise<void>;
   getComputeStatus(requestId: string): Promise<ComputeStatus>;
   getComputeData(requestId: string): Promise<ComputeRequestDataModel[]>;
@@ -23,8 +28,10 @@ export interface IComputeService {
 export class ComputeService implements IComputeService {
 
   constructor(
+    @inject(TYPES.AppConfig) private config: AppConfig,
     @inject(TYPES.ServiceBusClient) private serviceBus: IServiceBusClient,
-    @inject(TYPES.ClusterDatabase) private context: IShamanClusterDatabase) {}
+    @inject(TYPES.ClusterDatabase) private context: IShamanClusterDatabase,
+    @inject(TYPES.FileService) private fileService: IFileService) {}
 
   async startProcess(req: ComputeRequestForm): Promise<string> {
     req.requestId = newGuid();
@@ -74,6 +81,22 @@ export class ComputeService implements IComputeService {
     model.data = JSON.stringify(message.data || {});
     model.messageDateTime = sqliteDate();
     await this.context.models.compute_request_data.insert(model);
+  }
+
+  async storeFile(message: ComputeFileForm): Promise<void> {
+    let dataFolder = _path.join(this.config.storageFolderPath, 'files');
+    let path = _path.join(dataFolder, message.requestId);
+    await this.fileService.ensureFolderExists(dataFolder, message.requestId);
+    await this.fileService.writeFile(_path.join(path, message.fileName), message.contents);
+    let model = new ComputeRequestFileModel();
+    model.requestId = message.requestId;
+    model.deviceId = message.deviceId;
+    model.filePath = path;
+    model.fileName = message.fileName;
+    model.fileExtension = message.extension || this.fileService.getFileExtension(message.fileName);
+    model.args = JSON.stringify(message.args || {});
+    model.messageDateTime = sqliteDate();
+    await this.context.models.compute_request_file.insert(model);
   }
 
   async updateChunkStatus(requestId: string, chunkId: string, status: string): Promise<void> {

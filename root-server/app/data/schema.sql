@@ -45,6 +45,17 @@ CREATE TABLE IF NOT EXISTS compute_request_data (
   messageDateTime TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS compute_request_file (
+  computeRequestMessageId INTEGER NOT NULL PRIMARY KEY,
+  requestId VARCHAR(64) NOT NULL,
+  deviceId VARCHAR(64) NOT NULL,
+  filePath VARCHAR(256) NOT NULL,
+  fileName VARCHAR(128) NOT NULL,
+  fileExtension VARCHAR(12) NOT NULL,
+  args TEXT NOT NULL,
+  messageDateTime TEXT NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS command_request (
   commandRequestId INTEGER NOT NULL PRIMARY KEY,
   requestId VARCHAR(64) NOT NULL,

@@ -8,7 +8,8 @@ const TYPES = {
   RegistrationService: "RegistrationService",
   TimerService: "TimerService",
   PlatformService: "PlatformService",
-  CommandService: "CommandService"
+  CommandService: "CommandService",
+  FileService: "FileService"
 };
 
 export { TYPES };

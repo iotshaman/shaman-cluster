@@ -5,6 +5,7 @@ import { ComputeRequestMessageModel } from './models/compute-request-message.mod
 import { ComputeRequestDataModel } from './models/compute-request-data.model';
 import { CommandRequestModel } from './models/command-request.model';
 import { CommandRequestDataModel } from './models/command-request-data.model';
+import { ComputeRequestFileModel } from './models/compute-request-file.model';
 
 export class IShamanClusterDatabase {
   models: {
@@ -12,6 +13,7 @@ export class IShamanClusterDatabase {
     command_request_data: Collection<CommandRequestDataModel>,
     compute_request: Collection<ComputeRequestModel>,
     compute_request_data: Collection<ComputeRequestDataModel>,
+    compute_request_file: Collection<ComputeRequestFileModel>,
     compute_request_message: Collection<ComputeRequestMessageModel>,
     registration: Collection<NodeRegistrationModel>
   }
@@ -24,6 +26,7 @@ export class ShamanClusterDatabase extends DatabaseContext implements IShamanClu
     command_request_data: new Collection<CommandRequestDataModel>(),
     compute_request: new Collection<ComputeRequestModel>(),
     compute_request_data: new Collection<ComputeRequestDataModel>(),
+    compute_request_file: new Collection<ComputeRequestFileModel>(),
     compute_request_message: new Collection<ComputeRequestMessageModel>(),
     registration: new Collection<NodeRegistrationModel>(),
   }

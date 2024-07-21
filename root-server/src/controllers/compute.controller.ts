@@ -4,7 +4,7 @@ import { inject, injectable } from "inversify";
 import { RouteError, ShamanExpressController } from "shaman-api";
 import { TYPES } from "../composition/app.composition.types";
 import { IComputeService } from "../services/compute.service";
-import { ComputeRequestForm } from "shaman-cluster-lib";
+import { ComputeFileForm, ComputeRequestForm } from "shaman-cluster-lib";
 
 @injectable()
 export class ComputeController implements ShamanExpressController {
@@ -22,6 +22,7 @@ export class ComputeController implements ShamanExpressController {
       .post('/message', this.logComputeMessage)
       .post('/error', this.logComputeError)
       .post('/data', this.storeComputeData)
+      .post('/file', this.storeComputeFile)
       .post('/chunk/status', this.updateChunkStatus)
       .get('/:requestId/status', this.getComputeStatus)
       .get('/:requestId/data', this.getComputeData)
@@ -58,6 +59,16 @@ export class ComputeController implements ShamanExpressController {
     if (!req.body.requestId) return next(new RouteError("No request id provided.", 400));
     if (!req.body.deviceId) return next(new RouteError("No device id provided.", 400));
     return this.computeService.storeData(req.body)
+      .then(_ => res.status(204).send({status: "Success"}))
+      .catch(ex => next(new RouteError(ex.message, 500)));
+  }
+
+  storeComputeFile = (req: Request, res: Response, next: any) => {
+    let body = req.body as ComputeFileForm;
+    if (!body.requestId) return next(new RouteError("No request id provided.", 400));
+    if (!body.deviceId) return next(new RouteError("No device id provided.", 400));
+    if (!body.fileName) return next(new RouteError("No filename provided.", 400));
+    return this.computeService.storeFile(body)
       .then(_ => res.status(204).send({status: "Success"}))
       .catch(ex => next(new RouteError(ex.message, 500)));
   }

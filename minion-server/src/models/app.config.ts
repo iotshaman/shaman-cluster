@@ -12,4 +12,5 @@ export class AppConfig {
   rootNodeApiUri: string;
   webhooks: WebhookListener[];
   proxy?: ProxyConfig;
+  chromiumPath?: string;
 }
