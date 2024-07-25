@@ -1,5 +1,10 @@
 {
   "port": "9301",
   "serviceBusApiUrl": "http://localhost:9399/api",
-  "storageFolderPath": "/path/to/data/storage/folder"
+  "storageFolderPath": "/path/to/data/storage/folder",
+  "bodyParser": {
+    "limit": "20mb",
+    "extended": true,
+    "parameters": 20000
+  }
 }

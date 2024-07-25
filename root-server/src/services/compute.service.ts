@@ -12,6 +12,7 @@ import { ComputeRequestDataModel } from "../data/models/compute-request-data.mod
 import { ComputeRequestModel } from "../data/models/compute-request.model";
 import { ComputeStatus } from "../models/comput-status";
 import { ComputeRequestFileModel } from "../data/models/compute-request-file.model";
+import { ComputeArgumentFactory } from "../factories/compute-argument.factory";
 
 export interface IComputeService {
   startProcess(req: ComputeRequestForm): Promise<string>;
@@ -43,7 +44,7 @@ export class ComputeService implements IComputeService {
           requestId: req.requestId,
           chunkId: chunkId
         }),
-        args: {skill: req.skill, chunkId, requestId: req.requestId}
+        args: ComputeArgumentFactory.GetArguments(req, chunkId)
       }
     });
     await this.saveComputeRequests(req.requestId, messages);

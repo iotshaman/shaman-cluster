@@ -115,11 +115,7 @@ Create the file `/home/kbrown/scripts/reset-tor-circuit.sh` and add the followin
 Then run the command `crontab -e`, to open a cron file, and enter the following commands:
 ```sh
 * * * * * ( /home/kbrown/scripts/reset-tor-circuit.sh )
-* * * * * ( sleep 10 ; /home/kbrown/scripts/reset-tor-circuit.sh )
-* * * * * ( sleep 20 ; /home/kbrown/scripts/reset-tor-circuit.sh )
 * * * * * ( sleep 30 ; /home/kbrown/scripts/reset-tor-circuit.sh )
-* * * * * ( sleep 40 ; /home/kbrown/scripts/reset-tor-circuit.sh )
-* * * * * ( sleep 50 ; /home/kbrown/scripts/reset-tor-circuit.sh )
 ```
 
 ### Testing TOR Access
@@ -131,3 +127,16 @@ curl -v --socks4 localhost:9050 https://check.torproject.org/api/ip
 ### References
 https://objsal.medium.com/install-tor-in-raspberry-pi-530115053a1d
 https://www.npmjs.com/package/tor-request
+
+## Install and Configure Chromium
+If you want to scrape websites that have dynamic content you will need to install and configure "Chromium".
+
+To install Chromium run the following command:
+```sh
+sudo apt install chromium-browser chromium-codecs-ffmpeg -y
+```
+
+Then, in your minion config(s), add the following json property:
+```json
+"chromiumPath": "/usr/bin/chromium-browser"
+```

@@ -15,7 +15,8 @@ let bootstrap = async () => {
       'Content-Type',
       'Data-Type',
       'Authorization'
-    ]
+    ],
+    bodyParser: config.bodyParser
   });
   let container = await app.compose();
   await Compose(container);
