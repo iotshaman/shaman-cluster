@@ -5,6 +5,8 @@ BACKUP=~/apps/shaman-cluster-minion-backup
 STAGE=~/apps/shaman-cluster-minion-stage
 STAGE_CONFIG=~/apps/shaman-cluster-minion-stage/minion-server/app/config/app.config.json
 APP_CONFIG=~/apps/shaman-cluster-minion/minion-server/app/config/app.config.json
+STAGE_PLATFORM_CONFIG=~/apps/shaman-cluster-minion-stage/minion-server/app/data/platform-config.json
+PLATFORM_CONFIG=~/apps/shaman-cluster-minion/minion-server/app/data/platform-config.json
 
 if [ -z "$1" ]; then
   echo "No URL provided!"
@@ -38,6 +40,9 @@ npm run restore
 # copy existing config
 rm $STAGE_CONFIG
 cp $APP_CONFIG $STAGE_CONFIG
+if [ -f $PLATFORM_CONFIG ]; then
+  cp $PLATFORM_CONFIG $STAGE_PLATFORM_CONFIG
+fi
 
 # swap folder
 mv $APPDIR $BACKUP
