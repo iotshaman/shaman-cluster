@@ -10,9 +10,10 @@ import { IShamanClusterDatabase } from "../data/database.context";
 import { ComputeRequestMessageModel } from "../data/models/compute-request-message.model";
 import { ComputeRequestDataModel } from "../data/models/compute-request-data.model";
 import { ComputeRequestModel } from "../data/models/compute-request.model";
-import { ComputeStatus } from "../models/comput-status";
+import { ComputeStatus } from "../models/compute-status";
 import { ComputeRequestFileModel } from "../data/models/compute-request-file.model";
 import { ComputeArgumentFactory } from "../factories/compute-argument.factory";
+import { RequestWebhookModel } from "../data/models/request-webhook.model";
 
 export interface IComputeService {
   startProcess(req: ComputeRequestForm): Promise<string>;
@@ -48,6 +49,7 @@ export class ComputeService implements IComputeService {
       }
     });
     await this.saveComputeRequests(req.requestId, messages);
+    await this.saveRequestwebhook(req.requestId, req.webhook);
     await this.serviceBus.postMessages(messages);
     return req.requestId;
   }
@@ -114,6 +116,13 @@ export class ComputeService implements IComputeService {
       conditions: ['requestId = ?', 'chunkId = ?'],
       args: [requestId, chunkId]
     });
+    var computeStatus = await this.getComputeStatus(requestId);
+    if (computeStatus.pending !== 0) return;
+    this.serviceBus.postMessage({
+      path: 'notify',
+      body: {requestId, status: computeStatus},
+      args: {requestId, requestType: 'compute'}
+    });
   }
 
   async getComputeStatus(requestId: string): Promise<ComputeStatus> {
@@ -147,6 +156,15 @@ export class ComputeService implements IComputeService {
       model.status = 'Pending';
       await this.context.models.compute_request.insert(model);
     }
+  }
+
+  private async saveRequestwebhook(requestId: string, webhook?: string): Promise<void> {
+    if (!webhook) return Promise.resolve();
+    var model = new RequestWebhookModel();
+    model.requestId = requestId;
+    model.requestType = 'compute';
+    model.webhook = webhook;
+    await this.context.models.request_webhook.insert(model);
   }
 
 }

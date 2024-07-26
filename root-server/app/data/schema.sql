@@ -74,3 +74,10 @@ CREATE TABLE IF NOT EXISTS command_request_data (
   stderr TEXT NULL,
   messageDateTime TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS request_webhook (
+  requestWebhookId INTEGER NOT NULL PRIMARY KEY,
+  requestId VARCHAR(64) NOT NULL,
+  requestType VARCHAR(16) NOT NULL,
+  webhook VARCHAR(512) NOT NULL
+);

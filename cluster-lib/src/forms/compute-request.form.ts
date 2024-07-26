@@ -3,4 +3,5 @@ export type ComputeRequestForm = {
   requestId: string;
   body: any;
   chunks: any[];
+  webhook?: string;
 }

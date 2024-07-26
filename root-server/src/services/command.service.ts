@@ -6,11 +6,13 @@ import { IRegistrationService } from "./registration.service";
 import { CommandRequestModel } from "../data/models/command-request.model";
 import { IShamanClusterDatabase } from "../data/database.context";
 import { CommandRequestDataModel } from "../data/models/command-request-data.model";
+import { CommandStatus } from "../models/command-status";
 
 export interface ICommandService {
   scheduleCommand(form: CommandForm): Promise<void>;
   storeData(form: CommandDataForm): Promise<void>;
   updateCommandStatus(requestId: string, deviceId: string, status: string): Promise<void>;
+  getCommandStatus(requestId: string): Promise<CommandStatus>;
 }
 
 @injectable()
@@ -63,6 +65,18 @@ export class CommandService implements ICommandService {
       conditions: ['requestId = ?', 'deviceId = ?'],
       args: [requestId, deviceId]
     });
+  }
+
+  async getCommandStatus(requestId: string): Promise<CommandStatus> {
+    let chunks = await this.context.models.command_request.find({
+      conditions: ['requestId = ?'],
+      args: [requestId]
+    });
+    return {
+      success: chunks.filter(c => c.status == 'Success').length,
+      pending: chunks.filter(c => c.status == 'Pending').length,
+      error: chunks.filter(c => c.status == 'Error').length
+    }
   }
 
   private async saveCommandRequests(requestId: string, messages: ServiceBusMessage[]): Promise<void> {

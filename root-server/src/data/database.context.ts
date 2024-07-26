@@ -6,6 +6,7 @@ import { ComputeRequestDataModel } from './models/compute-request-data.model';
 import { CommandRequestModel } from './models/command-request.model';
 import { CommandRequestDataModel } from './models/command-request-data.model';
 import { ComputeRequestFileModel } from './models/compute-request-file.model';
+import { RequestWebhookModel } from './models/request-webhook.model';
 
 export class IShamanClusterDatabase {
   models: {
@@ -15,7 +16,8 @@ export class IShamanClusterDatabase {
     compute_request_data: Collection<ComputeRequestDataModel>,
     compute_request_file: Collection<ComputeRequestFileModel>,
     compute_request_message: Collection<ComputeRequestMessageModel>,
-    registration: Collection<NodeRegistrationModel>
+    registration: Collection<NodeRegistrationModel>,
+    request_webhook: Collection<RequestWebhookModel>
   }
   runQuery: <T>(query: string, args: any) => Promise<T[]>;
 }
@@ -29,6 +31,7 @@ export class ShamanClusterDatabase extends DatabaseContext implements IShamanClu
     compute_request_file: new Collection<ComputeRequestFileModel>(),
     compute_request_message: new Collection<ComputeRequestMessageModel>(),
     registration: new Collection<NodeRegistrationModel>(),
+    request_webhook: new Collection<RequestWebhookModel>()
   }
 
   runQuery = <T>(query: string, args: any): Promise<T[]> => {

@@ -9,7 +9,9 @@ const TYPES = {
   TimerService: "TimerService",
   PlatformService: "PlatformService",
   CommandService: "CommandService",
-  FileService: "FileService"
+  FileService: "FileService",
+  RegistrationTimer: "RegistrationTimer",
+  NotificationService: "NotificationService"
 };
 
 export { TYPES };

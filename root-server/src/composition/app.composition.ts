@@ -18,12 +18,16 @@ import { IShamanClusterDatabase } from "../data/database.context";
 import { IRegistrationService, RegistrationService } from "../services/registration.service";
 import { ComputeService, IComputeService } from "../services/compute.service";
 import { CommandService, ICommandService } from "../services/command.service";
+import { NotificationController } from "../controllers/notification.controller";
+import { RegistrationTimer } from "../timers/registration.timer";
+import { INotificationService, NotificationService } from "../services/notification.service";
 
 export async function Compose(container: Container): Promise<Container> {
   const config = container.get<AppConfig>(SHAMAN_API_TYPES.AppConfig);
   decorateLibraryClasses();
   await configureServices(container, config);
   await configureServiceClients(container, config);
+  await configureTimers(container);
   await configureRouter(container);
   await configureDataContext(container, config);
   return container;
@@ -43,6 +47,7 @@ function configureServices(container: Container, config: AppConfig): Promise<Con
   container.bind<IPlatformService>(TYPES.PlatformService).to(PlatformService);
   container.bind<ICommandService>(TYPES.CommandService).to(CommandService);
   container.bind<IFileService>(TYPES.FileService).to(FileService);
+  container.bind<INotificationService>(TYPES.NotificationService).to(NotificationService);
   return Promise.resolve(container);
 }
 
@@ -51,11 +56,17 @@ function configureServiceClients(container: Container, config: AppConfig): Promi
   return Promise.resolve(container);
 }
 
+function configureTimers(container: Container): Promise<Container> {
+  container.bind<RegistrationTimer>(TYPES.RegistrationTimer).to(RegistrationTimer);
+  return Promise.resolve(container);
+}
+
 function configureRouter(container: Container): Promise<Container> {
   container.bind<HealthController>(SHAMAN_API_TYPES.ApiController).to(HealthController);
   container.bind<RegistrationController>(SHAMAN_API_TYPES.ApiController).to(RegistrationController);
   container.bind<ComputeController>(SHAMAN_API_TYPES.ApiController).to(ComputeController);
   container.bind<CommandController>(SHAMAN_API_TYPES.ApiController).to(CommandController);
+  container.bind<NotificationController>(SHAMAN_API_TYPES.ApiController).to(NotificationController);
   return Promise.resolve(container);
 }
 
