@@ -19,6 +19,7 @@ import { ComputeController } from "../controllers/compute.controller";
 import { CommandController } from "../controllers/command.controller";
 import { CommandService, ICommandService } from "../services/command.service";
 import { ScrapeSkill } from "../skills/scrape/scrape.skill";
+import { CrawlSkill } from "../skills/crawl/crawl.skill";
 
 export async function Compose(container: Container, config: AppConfig): Promise<Container> {
   decorateLibraryClasses();
@@ -62,6 +63,7 @@ function configureSkills(container: Container, config: AppConfig): Promise<Conta
   return new Promise(res => {
     container.bind<ISkill>(TYPES.Skill).to(CollectSkill);
     container.bind<ISkill>(TYPES.Skill).to(ScrapeSkill);
+    container.bind<ISkill>(TYPES.Skill).to(CrawlSkill);
     res(container);
   });
 }
