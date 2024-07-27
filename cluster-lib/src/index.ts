@@ -15,6 +15,7 @@ export * from './functions/http.functions';
 export * from './functions/math.functions';
 export * from './functions/script.functions';
 export * from './functions/sqlite.functions';
+export * from './models/interrogator';
 export * from './services/file.service';
 export * from './services/http.service';
 export * from './services/platform.service';

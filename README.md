@@ -1,5 +1,5 @@
 # Shaman Cluster
-This application is built to support large-scale data collection operations. The solution is broken into 2 distinct roles: root and minion; configure multiple minions concurrently on one machine, on multiple machines, or both, and they will perform data collection and computation on your behalf, then report back to the root server.
+This application is built to support large-scale data collection operations. The solution is broken into 2 distinct roles: root and minion; configure multiple minions concurrently on one machine, or multiple machines (or both!), and they will perform data collection and computation on your behalf, then report back to the root server.
 
 ## Requirements
 The only requirement to run this application is Node JS >= 18.x.x.

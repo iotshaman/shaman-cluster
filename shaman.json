@@ -29,6 +29,28 @@
 								"to": "../shaman.root.json"
 							}
             ]
+          },
+					{
+            "instruction": "json",
+            "arguments": [
+              {
+								"path": "../package.json",
+								"replace": {
+									"scripts": {
+										"restore": "sf install"
+									}
+								}
+							},
+							{
+								"path": "package.json",
+								"replace": {
+									"scripts": {
+										"start": "node ./bin/app.service.js",
+										"setup": "node ./bin/setup.js"
+									}
+								}
+							}
+            ]
           }
         ]
       }
@@ -61,6 +83,20 @@
 								"to": "app/data/.gitkeep"
 							}
             ]
+          },
+					{
+            "instruction": "json",
+            "arguments": [
+              {
+								"path": "package.json",
+								"replace": {
+									"scripts": {
+										"start": "node ./bin/app.service.js",
+										"setup": "node ./bin/setup.js"
+									}
+								}
+							}
+            ]
           }
         ]
       }
@@ -89,6 +125,20 @@
 							{
 								"from": "app/data/schema.sql",
 								"to": "app/data/schema.sql"
+							}
+            ]
+          },
+					{
+            "instruction": "json",
+            "arguments": [
+              {
+								"path": "package.json",
+								"replace": {
+									"scripts": {
+										"start": "node ./bin/app.service.js",
+										"setup": "node ./bin/setup.js"
+									}
+								}
 							}
             ]
           }
