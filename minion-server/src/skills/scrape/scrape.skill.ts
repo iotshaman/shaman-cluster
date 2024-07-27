@@ -1,6 +1,6 @@
 import * as puppeteer from "puppeteer-core";
 import { inject, injectable } from 'inversify';
-import { newGuid, RestClientFactory } from 'shaman-cluster-lib';
+import { buildUrl, newGuid, RestClientFactory } from 'shaman-cluster-lib';
 import { TYPES } from '../../composition/app.composition.types';
 import { ScrapeArgs } from './scrape.args';
 import { ISkill } from '../skill';
@@ -62,7 +62,7 @@ export class ScrapeSkill implements ISkill {
         ]});
       const page = await browser.newPage();
       await page.setUserAgent(this.agent);
-      await page.goto(`${req.apiBaseUri}/${req.requestUri}`, {'timeout': 120000});
+      await page.goto(buildUrl(req.apiBaseUri, req.requestUri), {'timeout': 120000});
       const html = await page.content();
       await browser.close();
       let filename = `${newGuid()}.html`;

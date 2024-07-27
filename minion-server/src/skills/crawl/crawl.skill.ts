@@ -2,7 +2,7 @@ import * as puppeteer from "puppeteer-core";
 import { URL } from 'url';
 import { Element } from 'cheerio';
 import { inject, injectable } from 'inversify';
-import { RestClientFactory } from 'shaman-cluster-lib';
+import { buildUrl, RestClientFactory } from 'shaman-cluster-lib';
 import { TYPES } from '../../composition/app.composition.types';
 import { CrawlArgs } from './crawl.args';
 import { ISkill } from '../skill';
@@ -76,7 +76,7 @@ export class CrawlSkill implements ISkill {
         ]});
       const page = await browser.newPage();
       await page.setUserAgent(this.agent);
-      await page.goto(`${req.apiBaseUri}/${req.requestUri}`, {'timeout': 120000});
+      await page.goto(buildUrl(req.apiBaseUri, req.requestUri), {'timeout': 120000});
       const html = await page.content();
       await browser.close();
       return html;

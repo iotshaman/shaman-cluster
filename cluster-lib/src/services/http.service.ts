@@ -1,15 +1,15 @@
 import * as fs from 'fs';
-import { URL } from 'url';
 import { Agent } from 'https';
 import fetch, { Response, RequestInit } from 'node-fetch';
 import { IProxyService } from './proxy/proxy.service';
+import { buildUrl } from '../functions/http.functions';
 
 export abstract class HttpService {
 
   constructor(private apiBaseUri: string, private proxyService?: IProxyService) {}
 
   protected async getHtml(uri: string, headers: any = {}): Promise<string> {
-    let url = this.buildUrl(uri);
+    let url = buildUrl(this.apiBaseUri, uri);
     let data: RequestInit = {
       method: "GET",
       headers: {
@@ -24,7 +24,7 @@ export abstract class HttpService {
   }
 
   protected async get<T = any>(uri: string, headers: any = {}): Promise<T> {
-    let url = this.buildUrl(uri);
+    let url = buildUrl(this.apiBaseUri, uri);
     let data: RequestInit = {
       method: "GET",
       headers: {
@@ -39,7 +39,7 @@ export abstract class HttpService {
   }
 
   protected async post<T = any>(uri: string, body: any, headers: any = {}): Promise<T> {
-    let url = this.buildUrl(uri);
+    let url = buildUrl(this.apiBaseUri, uri);
     let data: RequestInit = {
       method: "POST",
       body: JSON.stringify(body),
@@ -55,7 +55,7 @@ export abstract class HttpService {
   }
 
   protected async patch<T = any>(uri: string, body: any, headers: any = {}): Promise<T> {
-    let url = this.buildUrl(uri);
+    let url = buildUrl(this.apiBaseUri, uri);
     let data: RequestInit = {
       method: "PATCH",
       body: JSON.stringify(body),
@@ -71,7 +71,7 @@ export abstract class HttpService {
   }
 
   protected async put<T = any>(uri: string, body: any, headers: any = {}): Promise<T> {
-    let url = this.buildUrl(uri);
+    let url = buildUrl(this.apiBaseUri, uri);
     let data: RequestInit = {
       method: "PUT",
       body: JSON.stringify(body),
@@ -87,7 +87,7 @@ export abstract class HttpService {
   }
 
   protected async delete<T = any>(uri: string, headers: any = {}): Promise<T> {
-    let url = this.buildUrl(uri);
+    let url = buildUrl(this.apiBaseUri, uri);
     let data: RequestInit = {
       method: "DELETE",
       headers: {
@@ -103,7 +103,7 @@ export abstract class HttpService {
 
   protected downloadFile(uri: string, outputPath: string): Promise<void> {
     return new Promise((res, err) => {
-      let url = `${this.apiBaseUri}/${uri}`;
+      let url = buildUrl(this.apiBaseUri, uri);
       fetch(url).then((response: Response) => {
         const fileStream = fs.createWriteStream(outputPath);
         response.body.pipe(fileStream);
@@ -111,16 +111,6 @@ export abstract class HttpService {
         fileStream.on("finish", res);
       });
     });
-  }
-
-  private buildUrl(uri: string): string {
-    let url = new URL(this.apiBaseUri);
-    if (!url.pathname) url.pathname = uri;
-    else {
-      if (url.pathname.endsWith('/')) url.pathname += uri;
-      else url.pathname += `/${uri}`;
-    }
-    return url.toString();
   }
 
   private handleApiResponse<T = any>(response: Response): Promise<T> {
