@@ -7,7 +7,12 @@
   "scripts": {
     "restore": "sf install",
     "build": "sf build",
-    "publish": "sf publish"
+    "publish": "sf publish",
+    "setup:debug": "npm --prefix ./root-server run setup:debug && npm --prefix ./service-bus/service-bus-api run setup:debug && npm --prefix ./minion-server run setup:debug",
+    "serve:root": "sf serve --project=shaman-cluster-root-api",
+    "debug:root": "sf build && sf serve --project=shaman-cluster-root-api",
+    "serve:minion": "sf serve --project=shaman-cluster-minion-api",
+    "debug:minion": "sf build && sf serve --project=shaman-cluster-minion-api"
   },
   "author": "Kyle Brown",
   "license": "ISC",

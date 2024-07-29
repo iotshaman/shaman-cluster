@@ -1,6 +1,7 @@
 {
   "port": "9399",
   "databaseFilePath": "/path/to/data/folder/",
+  "workerInterval": 100,
   "queues": [
     {
       "queueName": "compute",
@@ -11,8 +12,12 @@
       "queueName": "command",
       "maxAttempts": 1,
       "rules": []
+    },
+    {
+      "queueName": "notify",
+      "maxAttempts": 1,
+      "rules": []
     }
   ],
-  "topics": [],
-  "workerInterval": 100
+  "topics": []
 }

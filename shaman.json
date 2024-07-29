@@ -10,6 +10,9 @@
 				"shaman-cluster-lib",
 				"service-bus-client"
 			],
+			"runtimeDependencies": [
+				"service-bus-api"
+			],
       "specs": {
         "executable": true,
         "publish": [

@@ -8,7 +8,8 @@
 		"start": "node ./dist/app.service.js",
 		"debug": "tsc && node ./dist/app.service.js",
 		"test": "nyc mocha",
-		"setup": "node ./dist/setup.js"
+		"setup": "node ./dist/setup.js",
+		"setup:debug": "node ./dist/setup.js --debug"
 	},
 	"author": "Shaman CLI",
 	"license": "UNLICENSED",

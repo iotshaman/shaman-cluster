@@ -6,6 +6,7 @@
   "deviceId": "00000000-0000-0000-0000-000000000000",
   "nic": "Wi-Fi",
   "rootNodeApiUri": "http://localhost:9301/api",
+  "chromiumPath": null,
   "webhooks": [
     {
       "path": "compute", 

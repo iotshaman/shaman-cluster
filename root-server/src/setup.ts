@@ -1,15 +1,13 @@
 import * as os from 'os';
 import * as fs from 'fs';
 import * as _path from 'path';
-import { Interrogator, Prompt, RestClientFactory, FileService, newGuid } from "shaman-cluster-lib";
+import { Interrogator, Prompt, FileService, newGuid } from "shaman-cluster-lib";
 import { AppConfig } from './models/app.config';
 
-async function Setup() {
+async function Setup(debug?: boolean) {
   let responses = await Interrogate();
-  let serviceBusUrl = responses['serviceBusUrl'] || "http://localhost:9399/api";
-  let serviceBusHealthy = await CheckServiceHealth(serviceBusUrl);
-  if (!serviceBusHealthy) return Promise.reject(new Error("Service bus not available."));
-  await UpdateJson(responses);
+  if (!!debug) await CreateJsonConfig();
+  await UpdateJsonConfig(responses);
   console.log("\r\nConfiguration is complete, you can now run 'npm start' to start your root server.")
 }
 
@@ -21,12 +19,12 @@ function Interrogate(): Promise<{[key: string]: string}> {
   let interrogator = new Interrogator();
   let questions: Prompt[] = [
     {
-      prompt: `What network interface would you like to use?\r\n${interfaceList}\r\n\r\nEnter Selection: `,
+      prompt: `What network interface would you like to use (root server)?\r\n${interfaceList}\r\n\r\nEnter Selection: `,
       key: "nic",
       validator: (x: string) => !!interfaces[x]
     },
     {
-      prompt: `\r\nWhere you would like to store app data?\r\nEnter a Directory: `,
+      prompt: `\r\nWhere you would like to store app data (root server)?\r\nEnter a Directory: `,
       key: "dataPath",
       validator: (x: string) => !!fs.existsSync(x)
     },
@@ -38,17 +36,16 @@ function Interrogate(): Promise<{[key: string]: string}> {
   return interrogator.interrogate(questions);
 }
 
-async function CheckServiceHealth(apiBaseUri: string): Promise<boolean> {
-  let client = RestClientFactory(apiBaseUri);
-  try {
-    const rslt = await client.Get<{ status: string; }>('health');
-    return rslt.status == "healthy";
-  } catch (_) {
-    return false;
-  }
+function CreateJsonConfig(): Promise<void> {
+  let path = _path.join(__dirname, '..', 'app', 'config', 'app.config.json');
+  if (fs.existsSync(path)) return Promise.resolve();
+  let samplePath = _path.join(__dirname, '..', 'app', 'config', 'app.config.sample.json');
+  if (!fs.existsSync(samplePath)) return Promise.reject(new Error("No sample config file found."));
+  let fileService = new FileService();
+  return fileService.copyFile(samplePath, path);
 }
 
-async function UpdateJson(responses: {[key: string]: string}): Promise<void> {
+async function UpdateJsonConfig(responses: {[key: string]: string}): Promise<void> {
   let path = _path.join(__dirname, '..', 'app', 'config', 'app.config.json');
   let fileService = new FileService();
   let json = await fileService.readJson<AppConfig>(path);
@@ -59,4 +56,6 @@ async function UpdateJson(responses: {[key: string]: string}): Promise<void> {
   await fileService.writeJson(path, json);
 }
 
-Setup().catch(console.error);
+console.log("Starting configuration utility for Shaman Cluster Root Server API:");
+let debug = process.argv.some(a => a == "--debug");
+Setup(debug).catch(console.error);
