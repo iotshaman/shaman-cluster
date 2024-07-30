@@ -98,7 +98,7 @@ let request = fetch("http://localhost:9301/api/compute", {
       },
       {
         requestUri: "endpoint2",
-        args: {refId: 0}
+        args: {refId: 1}
       }
     ]
   })

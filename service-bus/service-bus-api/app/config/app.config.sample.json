@@ -5,7 +5,7 @@
   "queues": [
     {
       "queueName": "compute",
-      "maxAttempts": 1,
+      "maxAttempts": 3,
       "rules": []
     },
     {

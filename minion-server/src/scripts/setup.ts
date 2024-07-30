@@ -2,7 +2,11 @@ import * as os from 'os';
 import * as fs from 'fs';
 import * as _path from 'path';
 import { Interrogator, Prompt, FileService, newGuid } from "shaman-cluster-lib";
-import { AppConfig } from './models/app.config';
+import { AppConfig } from '../models/app.config';
+
+const appRoot = _path.join(__dirname, '..', '..');
+const configPath = _path.join(appRoot, 'app', 'config', 'app.config.json');
+const sampleConfigPath = _path.join(appRoot, 'app', 'config', 'app.config.sample.json');
 
 async function Setup(debug?: boolean) {
   let responses = await Interrogate();
@@ -41,25 +45,23 @@ function Interrogate(): Promise<{[key: string]: string}> {
 }
 
 function CreateJsonConfig(): Promise<void> {
-  let path = _path.join(__dirname, '..', 'app', 'config', 'app.config.json');
-  if (fs.existsSync(path)) return Promise.resolve();
-  let samplePath = _path.join(__dirname, '..', 'app', 'config', 'app.config.sample.json');
-  if (!fs.existsSync(samplePath)) return Promise.reject(new Error("No sample config file found."));
+  if (fs.existsSync(configPath)) return Promise.resolve();
+  if (!fs.existsSync(sampleConfigPath)) return Promise.reject(new Error("No sample config file found."));
   let fileService = new FileService();
-  return fileService.copyFile(samplePath, path);
+  return fileService.copyFile(sampleConfigPath, configPath);
 }
 
+const emptyGuid = "00000000-0000-0000-0000-000000000000";
 async function UpdateJsonConfig(responses: {[key: string]: string}): Promise<void> {
-  let path = _path.join(__dirname, '..', 'app', 'config', 'app.config.json');
   let fileService = new FileService();
-  let json = await fileService.readJson<AppConfig>(path);
+  let json = await fileService.readJson<AppConfig>(configPath);
   json.nic = responses['nic'];
-  json.deviceId = newGuid();
+  json.deviceId = (!json.deviceId || json.deviceId == emptyGuid) ? newGuid() : json.deviceId;
   json.dataPath = responses['dataPath'];
   json.serviceBusApiUrl = responses['serviceBusUrl'] || "http://localhost:9399/api";
   json.rootNodeApiUri = responses['rootServerUrl'] || "http://localhost:9301/api";
   json.webhooks[1].rules[0].value = json.deviceId;
-  await fileService.writeJson(path, json);
+  await fileService.writeJson(configPath, json);
 }
 
 console.log("Starting configuration utility for Shaman Cluster Minion Server API:");
