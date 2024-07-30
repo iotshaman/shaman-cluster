@@ -9,7 +9,9 @@
 		"debug": "tsc && node ./dist/app.service.js",
 		"test": "nyc mocha",
 		"setup": "node ./dist/scripts/setup.js",
-		"setup:debug": "node ./dist/scripts/setup.js --debug"
+		"setup:debug": "node ./dist/scripts/setup.js --debug",
+		"setup:browser": "node ./dist/scripts/setup.browser.js",
+		"setup:tor": "node ./dist/scripts/setup.tor.js"
 	},
 	"author": "Shaman CLI",
 	"license": "UNLICENSED",

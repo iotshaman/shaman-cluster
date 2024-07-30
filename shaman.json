@@ -95,7 +95,9 @@
 								"replace": {
 									"scripts": {
 										"start": "node ./bin/app.service.js",
-										"setup": "node ./bin/scripts/setup.js"
+										"setup": "node ./bin/scripts/setup.js",
+										"setup:browser": "node ./bin/scripts/setup.browser.js",
+										"setup:tor": "node ./bin/scripts/setup.tor.js"
 									}
 								}
 							}

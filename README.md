@@ -109,9 +109,9 @@ let request = fetch("http://localhost:9301/api/compute", {
 |Property|Description|
 |---|---|
 |skill|The specific skill required. The value "collect" instructs the minion server(s) to use the body / chunk parts of the request to make RESTful API requests.|
-|body|The high-level information for your request. Provide an "apiBaseUri" representing the entry point to your target API. You can optionally provide a boolean value for "proxy"; when set to `true` the application will attempt to make the request through a configured proxy (see Proxy Configuration section).|
+|body|The high-level information for your request. Provide an "apiBaseUri" representing the entry point to your target API. You can optionally provide a boolean value for "proxy"; when set to `true` the application will attempt to make the request through a configured proxy (see [Proxy Configuration](#proxy-configuration)).|
 |chunks|Each chunk represents a different API request. So, if you wish to make 2 API requests to the configured "apiBaseUri", you would provide 2 "chunks" and for each you would provide the relative path to the API endpoint. For each chunk you should also provide an "args" object; this object is not used internally, but is stored with your request chunks so you can link them back to your source dataset (in the above example we have a "refId" value that would hypothetically refer to identities in the source dataset). |
-|webhook|(optional) If you wish to be notified when all chunks have completed you can provide a URL here and the root server will send a notification to the provided URL (see Receiving Status Notifications section).|
+|webhook|(optional) If you wish to be notified when all chunks have completed you can provide a URL here and the root server will send a notification to the provided URL (see [Receiving Status Notifications](#receiving-status-notifications)).|
 
 ### Scrape Website HTML
 To scrape webpages in bulk you can use the "compute" API endpoint (skill = "scrape"). Please note this scrape skill is only to collect HTML, not parse it; you will need to handle the resulting dataset and provide your own HTML parsing logic. 
@@ -146,9 +146,9 @@ let request = fetch("http://localhost:9301/api/compute", {
 |Property|Description|
 |---|---|
 |skill|The specific skill required. The value "scrape" instructs the minion server(s) to use the body / chunk parts of the request to download all requested HTML files.|
-|body|The high-level information for your request. Provide an "apiBaseUri" representing the root URL of your target website. You can optionally provide a boolean value for "proxy"; when set to `true` the application will attempt to make the request through a configured proxy (see Proxy Configuration section). You can optionally provide a boolean value for "render"; when set to `true` the application will attempt to fully render the webpage (including javascript) before scraping the HTML.|
+|body|The high-level information for your request. Provide an "apiBaseUri" representing the root URL of your target website. You can optionally provide a boolean value for "proxy"; when set to `true` the application will attempt to make the request through a configured proxy (see [Proxy Configuration](#proxy-configuration)). You can optionally provide a boolean value for "render"; when set to `true` the application will attempt to fully render the webpage, including javascript, before scraping the HTML (see [Browser Configuration](#browser-configuration)).|
 |chunks|Each chunk represents a different webpage. So, if you wish to scrape 2 different webpage relative to the configured "apiBaseUri", you would provide 2 "chunks" and for each you would provide the relative path to the webpage. For each chunk you should also provide an "args" object; this object is not used internally, but is stored with your request chunks so you can link them back to your source dataset (in the above example we have a "refId" value that would hypothetically refer to identities in the source dataset). |
-|webhook|(optional) If you wish to be notified when all chunks have completed you can provide a URL here and the root server will send a notification to the provided URL (see Receiving Status Notifications section).|
+|webhook|(optional) If you wish to be notified when all chunks have completed you can provide a URL here and the root server will send a notification to the provided URL (see [Receiving Status Notifications](#receiving-status-notifications)).|
 
 ### Crawl Webpage
 To crawl webpages in bulk you can use the "compute" API endpoint (skill = "crawl"). Here is an example request, using the fetch library:
@@ -181,9 +181,9 @@ let request = fetch("http://localhost:9301/api/compute", {
 |Property|Description|
 |---|---|
 |skill|The specific skill required. The value "crawl" instructs the minion server(s) to use the body / chunk parts of the request to crawl all provided webpages.|
-|body|The high-level information for your request. Provide an "apiBaseUri" representing the root URL of your target website. You can optionally provide a boolean value for "proxy"; when set to `true` the application will attempt to make the request through a configured proxy (see Proxy Configuration section). You can optionally provide a boolean value for "render"; when set to `true` the application will attempt to fully render the webpage (including javascript) before scraping the HTML.|
+|body|The high-level information for your request. Provide an "apiBaseUri" representing the root URL of your target website. You can optionally provide a boolean value for "proxy"; when set to `true` the application will attempt to make the request through a configured proxy (see [Proxy Configuration](#proxy-configuration)). You can optionally provide a boolean value for "render"; when set to `true` the application will attempt to fully render the webpage, including javascript, before scraping the HTML (see [Browser Configuration](#browser-configuration)).|
 |chunks|Each chunk represents a different webpage. So, if you wish to scrape 2 different webpage relative to the configured "apiBaseUri", you would provide 2 "chunks" and for each you would provide the relative path to the webpage. For each chunk you should also provide an "args" object; this object is not used internally, but is stored with your request chunks so you can link them back to your source dataset (in the above example we have a "refId" value that would hypothetically refer to identities in the source dataset). |
-|webhook|(optional) If you wish to be notified when all chunks have completed you can provide a URL here and the root server will send a notification to the provided URL (see Receiving Status Notifications section).|
+|webhook|(optional) If you wish to be notified when all chunks have completed you can provide a URL here and the root server will send a notification to the provided URL (see [Receiving Status Notifications](#receiving-status-notifications)).|
 
 ### Perform Command
 To run a command on all (or a specific) minion nodes you can use the "command" API endpoint. Here is an example request, using the fetch library:
@@ -208,3 +208,54 @@ let request = fetch("http://localhost:9301/api/command", {
 |command|The executable or bash command to run.|
 |args|The command's argument array.|
 |targetId|(optional) The minion node's device id (from minion app config). If left blank / null, all minion nodes will receive the command.|
+
+### Querying Compute Data
+Each of the above "skills" will result in some form of presistent data (HTML files, API responses, etc). Use the below API endpoints to check on the progress of requests and access the corresponding data.
+
+|Uri|Description|
+|---|---|
+|api/compute/{requestId}/status|Uses the provided `requestId` to return a status object.|
+|api/compute/{requestId}/data|Uses the provided `requestId` to return all corresponding chunk data.|
+|api/compute/{requestId}/files|Not yet implemented|
+|api/compute/{requestId}/messages|Not yet implemented|
+
+## Proxy Configuration
+When performing mass data collection you will sometimes run into access limitations; for example, a website may limit the amount of webpages a given IP address can access during a 10 minute time interval (this is just one example, many other access-limiting techniques exist). In order to work around this Shaman Cluster minions have built-in access to public reverse proxy services, simply set the "proxy" value to true on compute requests and the app will try to find an available proxy to do the work on your behalf.
+
+One important thing to note, however, is public proxy services are notoriously slow and experience an uncomfortably high rate of failure. Because of this inherent limitation, we have added a way for you to configure a [Tor proxy](https://en.wikipedia.org/wiki/Tor_(network)) for improved performance and experience. When properly configured your Tor proxy can change its "circuit" on a regular interval, thereby changing your outgoing IP address, making it harder for websites to know who you are.
+
+Before continuing, you will first need to install Tor on your minion machine(s). For more information, please see our [Guide to Setting Up Tor on a Raspberry Pi](https://github.com/iotshaman/shaman-cluster/blob/main/documents/pi-stack.md#setup-tor-raspberry-pi) (please note that installation will be different for other operating systems).
+
+To configure your minion(s) to use a Tor proxy, first open a command line terminal and navigate to the "minion-server" project directory, then enter the following command:
+```sh
+npm run setup:tor
+```
+
+Next, it will prompt you to enter the URL for your Tor proxy URL; provide a value, then click `Enter`. Once complete, simply restart any minion processes that are currently running and any requests with `proxy: true` will now route through your Tor proxy. 
+
+## Browser Configuration
+Many websites pre-render their HTML pages before serving them, allowing us to simply make a GET HTTP request to the webpage URL and retrieve all pertinent data. However, some webpages dynamically render their HTML pages per-request, meaning a simple GET request will only yield partial information; when this occurs you need to "render" the content in order scrape it. 
+
+To make it as simple as possible certain compute requests accept a `render: boolean` property in the `body` section to allow users to specify that a webpage needs to be rendered before scraping. Before doing so, however, you must first have a Chromium-based browser installed (Chrome / Edge / Chromium should all work), and you must tell the minion server(s) where to find the executable. 
+
+Once you have a browser installed on your minion machine(s), open a command line terminal and navigate to the "minion-server" project directory, then enter the following command:
+```sh
+npm run setup:browser
+```
+
+Next, it will prompt you to enter the path to your browser's executable (please check back later for additional documentation on finding the executable path); provide a value, then click `Enter`. Once complete, simply restart any minion processes that are currently running and any requests with `render: true` will now render your webpage before returning the scrape results.
+
+## Receiving Status Notifications
+All "compute" skills accept a `body` parameter of `webhook`, and when provided the root server will send an HTTP POST request to the provided URL when all chunks are complete (including failures). Below is the type definition for the POST's payload:
+```ts
+export type StatusNotification = {
+  requestId: string;
+  status: {
+    success: number;
+    pending: number;
+    error: number;
+  }
+}
+```
+
+Please ensure any URL's provided as "webhook" values (in compute requests) accept this data structure. 
