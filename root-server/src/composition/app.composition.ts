@@ -21,6 +21,7 @@ import { CommandService, ICommandService } from "../services/command.service";
 import { NotificationController } from "../controllers/notification.controller";
 import { RegistrationTimer } from "../timers/registration.timer";
 import { INotificationService, NotificationService } from "../services/notification.service";
+import { FileController } from "../controllers/file.controller";
 
 export async function Compose(container: Container): Promise<Container> {
   const config = container.get<AppConfig>(SHAMAN_API_TYPES.AppConfig);
@@ -67,6 +68,7 @@ function configureRouter(container: Container): Promise<Container> {
   container.bind<ComputeController>(SHAMAN_API_TYPES.ApiController).to(ComputeController);
   container.bind<CommandController>(SHAMAN_API_TYPES.ApiController).to(CommandController);
   container.bind<NotificationController>(SHAMAN_API_TYPES.ApiController).to(NotificationController);
+  container.bind<FileController>(SHAMAN_API_TYPES.ApiController).to(FileController);
   return Promise.resolve(container);
 }
 

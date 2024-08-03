@@ -14,6 +14,8 @@ import { ComputeStatus } from "../models/compute-status";
 import { ComputeRequestFileModel } from "../data/models/compute-request-file.model";
 import { ComputeArgumentFactory } from "../factories/compute-argument.factory";
 import { RequestWebhookModel } from "../data/models/request-webhook.model";
+import { ComputeFileMetadata } from "../models/compute-file-metadata";
+import { ComputeData } from "../models/compute-data";
 
 export interface IComputeService {
   startProcess(req: ComputeRequestForm): Promise<string>;
@@ -23,7 +25,9 @@ export interface IComputeService {
   storeFile(message: ComputeFileForm): Promise<void>;
   updateChunkStatus(requestId: string, chunkId: string, status: string): Promise<void>;
   getComputeStatus(requestId: string): Promise<ComputeStatus>;
-  getComputeData(requestId: string): Promise<ComputeRequestDataModel[]>;
+  getComputeData(requestId: string): Promise<ComputeData[]>;
+  getComputeMessages(requestId: string): Promise<ComputeRequestMessageModel[]>;
+  getComputeFiles(requestId: string): Promise<ComputeFileMetadata[]>;
 }
 
 @injectable()
@@ -137,11 +141,41 @@ export class ComputeService implements IComputeService {
     }
   }
 
-  getComputeData(requestId: string): Promise<ComputeRequestDataModel[]> {
-    return this.context.models.compute_request_data.find({
+  async getComputeData(requestId: string): Promise<ComputeData[]> {
+    var data = await this.context.models.compute_request_data.find({
       conditions: ['requestId = ?'],
       args: [requestId]
     });
+    return data.map(x => ({
+      args: JSON.parse(x.args),
+      data: JSON.parse(x.data)
+    }));
+  }
+
+  getComputeMessages(requestId: string): Promise<ComputeRequestMessageModel[]> {
+    return this.context.models.compute_request_message.find({
+      conditions: ['requestId = ?'],
+      args: [requestId]
+    });
+  }
+
+  async getComputeFiles(requestId: string): Promise<ComputeFileMetadata[]> {
+    let files = await this.context.models.compute_request_file.find({
+      conditions: ['requestId = ?'],
+      args: [requestId]
+    });
+    return files.map(f => {
+      let root = `${this.config.storageFolderPath}\\files\\`;
+      let path = f.filePath.replace(root, '');
+      let uri = `files/${path}/${f.fileName}`;
+      return {
+        filePath: path,
+        fileName: f.fileName,
+        fileExtension: f.fileExtension,
+        args: JSON.parse(f.args),
+        uri: uri
+      }
+    })
   }
 
   private async saveComputeRequests(requestId: string, messages: ServiceBusMessage[]): Promise<void> {

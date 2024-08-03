@@ -26,6 +26,8 @@ export class ComputeController implements ShamanExpressController {
       .post('/chunk/status', this.updateChunkStatus)
       .get('/:requestId/status', this.getComputeStatus)
       .get('/:requestId/data', this.getComputeData)
+      .get('/:requestId/files', this.getComputeFiles)
+      .get('/:requestId/messages', this.getComputeMessages)
 
     express.use('/api/compute', router);
   }
@@ -35,7 +37,7 @@ export class ComputeController implements ShamanExpressController {
     if (!body.skill) return next(new RouteError("No skill name provided.", 400));
     if (!body.chunks?.length) return next(new RouteError("No chunks provided.", 400));
     return this.computeService.startProcess(req.body)
-      .then(requestId => res.status(202).send({status: "Accepted", requestId}))
+      .then(requestId => res.status(200).send({status: "Accepted", requestId}))
       .catch(ex => next(new RouteError(ex.message, 500)));
   }
 
@@ -93,7 +95,21 @@ export class ComputeController implements ShamanExpressController {
   getComputeData = (req: Request, res: Response, next: any) => {
     if (!req.params.requestId) return next(new RouteError("No request id provided.", 400));
     return this.computeService.getComputeData(req.params.requestId)
-      .then(status => res.json(status))
+      .then(data => res.json(data))
+      .catch(ex => next(new RouteError(ex.message, 500)));
+  }
+
+  getComputeFiles = (req: Request, res: Response, next: any) => {
+    if (!req.params.requestId) return next(new RouteError("No request id provided.", 400));
+    return this.computeService.getComputeFiles(req.params.requestId)
+      .then(files => res.json(files))
+      .catch(ex => next(new RouteError(ex.message, 500)));
+  }
+
+  getComputeMessages = (req: Request, res: Response, next: any) => {
+    if (!req.params.requestId) return next(new RouteError("No request id provided.", 400));
+    return this.computeService.getComputeMessages(req.params.requestId)
+      .then(messages => res.json(messages))
       .catch(ex => next(new RouteError(ex.message, 500)));
   }
 

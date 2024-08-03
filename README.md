@@ -182,7 +182,7 @@ let request = fetch("http://localhost:9301/api/compute", {
 |---|---|
 |skill|The specific skill required. The value "crawl" instructs the minion server(s) to use the body / chunk parts of the request to crawl all provided webpages.|
 |body|The high-level information for your request. Provide an "apiBaseUri" representing the root URL of your target website. You can optionally provide a boolean value for "proxy"; when set to `true` the application will attempt to make the request through a configured proxy (see [Proxy Configuration](#proxy-configuration)). You can optionally provide a boolean value for "render"; when set to `true` the application will attempt to fully render the webpage, including javascript, before scraping the HTML (see [Browser Configuration](#browser-configuration)).|
-|chunks|Each chunk represents a different webpage. So, if you wish to scrape 2 different webpage relative to the configured "apiBaseUri", you would provide 2 "chunks" and for each you would provide the relative path to the webpage. For each chunk you should also provide an "args" object; this object is not used internally, but is stored with your request chunks so you can link them back to your source dataset (in the above example we have a "refId" value that would hypothetically refer to identities in the source dataset). |
+|chunks|Each chunk represents a different webpage. So, if you wish to crawl 2 different webpage relative to the configured "apiBaseUri", you would provide 2 "chunks" and for each you would provide the relative path to the webpage. For each chunk you should also provide an "args" object; this object is not used internally, but is stored with your request chunks so you can link them back to your source dataset (in the above example we have a "refId" value that would hypothetically refer to identities in the source dataset). |
 |webhook|(optional) If you wish to be notified when all chunks have completed you can provide a URL here and the root server will send a notification to the provided URL (see [Receiving Status Notifications](#receiving-status-notifications)).|
 
 ### Perform Command
@@ -215,9 +215,23 @@ Each of the above "skills" will result in some form of presistent data (HTML fil
 |Uri|Description|
 |---|---|
 |api/compute/{requestId}/status|Uses the provided `requestId` to return a status object.|
+|api/compute/{requestId}/messages|Uses the provided `requestId` to return a list of compute message objects.|
 |api/compute/{requestId}/data|Uses the provided `requestId` to return all corresponding chunk data.|
-|api/compute/{requestId}/files|Not yet implemented|
-|api/compute/{requestId}/messages|Not yet implemented|
+|api/compute/{requestId}/files|Uses the provided `requestId` to return a list of [file metadata objects](#file-metadata-objects).|
+
+#### File Metadata Objects
+File metadata objects contain all data necessary to work with scraped HTML files. 
+```ts
+export type ComputeFileMetadata = {
+  filePath: string;
+  fileName: string;
+  fileExtension: string;
+  args: any;
+  uri: string;
+}
+```
+
+The most important value here is `uri`, which you can append to the root servers base URL to access the file contents.
 
 ## Proxy Configuration
 When performing mass data collection you will sometimes run into access limitations; for example, a website may limit the amount of webpages a given IP address can access during a 10 minute time interval (this is just one example, many other access-limiting techniques exist). In order to work around this Shaman Cluster minions have built-in access to public reverse proxy services, simply set the "proxy" value to true on compute requests and the app will try to find an available proxy to do the work on your behalf.
@@ -246,7 +260,7 @@ npm run setup:browser
 Next, it will prompt you to enter the path to your browser's executable (please check back later for additional documentation on finding the executable path); provide a value, then click `Enter`. Once complete, simply restart any minion processes that are currently running and any requests with `render: true` will now render your webpage before returning the scrape results.
 
 ## Receiving Status Notifications
-All "compute" skills accept a `body` parameter of `webhook`, and when provided the root server will send an HTTP POST request to the provided URL when all chunks are complete (including failures). Below is the type definition for the POST's payload:
+All "compute" skills accept a parameter of `webhook`, and when provided the root server will send an HTTP POST request to the provided URL, when all chunks are complete (including failures). Below is the type definition for the POST's payload:
 ```ts
 export type StatusNotification = {
   requestId: string;
